@@ -11,9 +11,7 @@ async function loadHTML(fileName: string): Promise<string> {
   const rootDir = await navigator.storage.getDirectory()
   const fileHandle = await rootDir.getFileHandle(fileName, { create: false })
   const file = await fileHandle.getFile()
-
-  const blob = new Blob([file], {type: "text/html"})
-  return URL.createObjectURL(blob)
+  return URL.createObjectURL(file)
 }
 
 const HTMLView: React.FC = () => {
