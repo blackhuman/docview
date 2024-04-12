@@ -69,7 +69,7 @@ const PDFViewer: React.FC = () => {
       const unloadResult = PSPDFKit.unload(container)
       console.log('PDFView unload', unloadResult)
     }
-  }, [fileName]);
+  }, [fileName, router]);
 
   return <div id={fileName} ref={containerRef} className='h-full w-full'/>;
 };

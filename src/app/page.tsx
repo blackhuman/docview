@@ -1,7 +1,7 @@
 'use client';
 import { DragEventHandler, DragEvent, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import {Button, ButtonGroup} from "@nextui-org/react";
+import {Button, Chip} from "@nextui-org/react";
 
 async function fileExisted(fileName: string): Promise<boolean> {
   try {
@@ -29,6 +29,14 @@ async function getValidateFileName(fileName: string): Promise<string> {
     index += 1
   }
   return `${validateFileNameBase}${fileNameExt}`
+}
+
+type FileType = 'pdf' | 'html'
+
+function getFileExt(fileName: string): FileType | null {
+  const fileNameSplitIndex = fileName.lastIndexOf('.')
+  if (fileNameSplitIndex === -1) return null
+  return fileName.slice(fileNameSplitIndex + 1) as FileType
 }
 
 export default function Home({children}: PropsWithChildren) {
@@ -79,14 +87,40 @@ export default function Home({children}: PropsWithChildren) {
   }
 
   return (
-    <div onDrop={onDrop} onDragOver={onDragOver} className='w-full h-full'>
+    <div 
+      onDrop={onDrop} 
+      onDragOver={onDragOver} 
+      className='w-full h-full grid grid-cols-5'>
       {
-        files.map((file, index) => (
-          <div key={index}>
-            <Link href={`/pdfview/${file}`}>{file}</Link>
-            <Button onClick={() => deleteFile(file)}>Delete</Button>
-          </div>
-        ))
+        files.map((file, index) => {
+          const fileExt = getFileExt(file)
+          if (fileExt === null) return null
+          let link: React.ReactElement
+          switch(fileExt) {
+            case 'pdf':
+              link = (
+                <Link href={`/pdfview/${file}`}>
+                  {file}
+                  <Chip color="primary">PDF</Chip>
+                </Link>
+              )
+              break
+            case 'html':
+              link = (
+                <Link href={`/htmlview/${file}`}>
+                  {file}
+                  <Chip color="secondary">HTML</Chip>
+                </Link>
+              )
+              break
+          }
+          return (
+            <div key={index}>
+              {link}
+              <Button onClick={() => deleteFile(file)}>Delete</Button>
+            </div>
+          )
+        }).filter(v => v !== null)
       }
     </div>
   );
