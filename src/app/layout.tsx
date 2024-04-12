@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="light">
-      <body className={inter.className}>
+      <body className={`${inter.className} w-screen h-screen`}>
         <Providers>
           {children}
         </Providers>
