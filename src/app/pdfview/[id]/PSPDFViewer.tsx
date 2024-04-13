@@ -23,6 +23,7 @@ async function loadPDF(fileName: string, container: HTMLDivElement, pdfInstanceR
     container,
     document: content,
     baseUrl: `${window.location.protocol}//${window.location.host}/`,
+    licenseKey: 'jgQ8JoOsV19biuvHtDFnJYxq6qLkJMbweGK2-i3ITRo5_oolYMPuQ0TcAQ9WFgmuoqi3iOC69SRf14qPBd_jDDsS51-EOfTD-2p5MB2ihHBpjr8y3KTcAwzBhgR3P60nFNsobnzGlwi8ejUsKEEylpWbCq_n1mGoYyq5iXH6qmhKWiUuihFWB1cJZXBkYnE6qC2a7vcSbRyhXg',
     inlineTextSelectionToolbarItems: () => [],
     toolbarItems,
   })
@@ -30,14 +31,13 @@ async function loadPDF(fileName: string, container: HTMLDivElement, pdfInstanceR
   console.log('PDFView loaded')
 
   // subscribe selection chage
-  pdfInstance.addEventListener("textSelection.change", textSelection => {
-    if (textSelection) {
-      textSelection.getText().then(text => {
-        console.log(text);
-      });
-    } else {
-      console.log("no text is selected");
-    }
+  pdfInstance.addEventListener("textSelection.change", async textSelection => {
+    if (!textSelection) return
+    const text = await textSelection.getText()
+    const lines = await textSelection.getSelectedTextLines()
+    const firstLineId = lines.get(0)!.id!
+    const pageLines = await pdfInstance.textLinesForPageIndex(textSelection.startPageIndex)
+    pageLines.filter(line => line.id === firstLineId)
   });
   return pdfInstance
 }
