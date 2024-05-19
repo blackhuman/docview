@@ -1,10 +1,14 @@
 'use client';
 import { useParams, useRouter } from "next/navigation"
 import {Book, Rendition, type NavItem} from 'epubjs'
-import { useEffect, useRef, useState } from 'react'
+import { FC, PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react'
+import Link from "next/link";
+import {  Listbox,  ListboxSection,  ListboxItem} from "@nextui-org/listbox";
+import { Button } from "@nextui-org/react";
 
 type Params = {
   id: string
+  sections?: string[]
 }
 
 async function loadFile(fileName: string): Promise<string> {
@@ -21,11 +25,13 @@ async function loadFileBytes(fileName: string): Promise<File> {
 }
 
 const Page = () => {
-  const {id: fileName} = useParams<Params>()
+  const {id: fileName, sections} = useParams<Params>()
+  const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
   const renditionRef = useRef<Rendition | null>(null)
   const mountRef = useRef(false)
-  const [sections, setSections] = useState<NavItem[]>([])
+  const [sectionToc, setSectionToc] = useState<NavItem[]>([])
+  const currentSection = useMemo(() => sections !== undefined ? sections[0] : null, [sections])
 
   useEffect(() => {
     async function load(): Promise<Rendition | null> {
@@ -37,12 +43,12 @@ const Page = () => {
       const book = new Book(bytes)
       book.loaded.navigation.then(toc => {
         const sections: NavItem[] = []
-        toc.forEach(section => {
-          sections.push(section)
-          console.log(`section, label: ${section.label}, href: ${section.href}`)
+        toc.forEach(sectionItem => {
+          sections.push(sectionItem)
+          console.log(`section, label: ${sectionItem.label}, href: ${sectionItem.href}`)
           return {}
         })
-        setSections(sections)
+        setSectionToc(sections)
       })
       const rendition = book.renderTo("epub-render", { 
         width: "100%", height: "100%",
@@ -59,17 +65,14 @@ const Page = () => {
         allowScriptedContent: true
       })
       rendition.hooks.render.register((view: any) => {
-        // const iframe = containerRef.current!.querySelector('iframe')
         view.iframe.referrerPolicy = 'unsafe-url'
+        const document = view.document as Document
+        document.body.style.padding = '0px'
       })
       console.log('displayed')
-      const displayed = rendition.display()
-      // displayed.then(() => {
-      //   const siframe = containerRef.current!.querySelector('iframe')
-      //   iframe!.referrerPolicy = "no-referrer-when-downgrade"
-      //   // iframe!.setAttribute('referrerpolicy', 'no-referrer-when-downgrade')
-      //   console.log('iframe', iframe)
-      // })
+      const displayed = currentSection !== null 
+        ? rendition.display(currentSection) 
+        : rendition.display()
       renditionRef.current = rendition
       return rendition
     }
@@ -83,19 +86,46 @@ const Page = () => {
         rendition?.destroy()
       })
     }
-  }, [fileName])
-
-  function onClick() {
-    console.log('onClick', sections[3].href)
-    renditionRef.current?.display(sections[3].href)
-  }
+  }, [currentSection, fileName])
 
   return (
-    <div ref={containerRef} className='w-full h-full'>
-        <button onClick={onClick}>Click</button>
+    <div ref={containerRef} className='w-full h-full flex flex-row'>
+        <div className='basis-1/6 flex flex-col m-3'>
+          <Button onClick={() => router.push('/')}>Home</Button>
+          {
+            <ListboxWrapper>
+              <Listbox aria-label="Actions">
+                {[
+                  (
+                  <ListboxItem key='cover' >
+                    <Link
+                      href={`/ebookview/${fileName}`}>
+                      Cover
+                    </Link>
+                  </ListboxItem>
+                  ),
+                  ...sectionToc.map(sectionItem => (
+                    <ListboxItem key={sectionItem.href} >
+                      <Link
+                        href={`/ebookview/${fileName}/${sectionItem.href}`}>
+                        {sectionItem.label}
+                      </Link>
+                    </ListboxItem>
+                  ))
+                ]}
+              </Listbox>
+            </ListboxWrapper>
+          }
+        </div>
         <div id="epub-render" className='w-full h-full'></div>
     </div>
   )
 }
+
+const ListboxWrapper: React.FC<PropsWithChildren> = ({children}) => (
+  <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-2">
+    {children}
+  </div>
+);
 
 export default Page
