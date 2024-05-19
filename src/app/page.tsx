@@ -31,7 +31,7 @@ async function getValidateFileName(fileName: string): Promise<string> {
   return `${validateFileNameBase}${fileNameExt}`
 }
 
-type FileType = 'pdf' | 'html'
+type FileType = 'pdf' | 'html' | 'epub'
 
 function getFileExt(fileName: string): FileType | null {
   const fileNameSplitIndex = fileName.lastIndexOf('.')
@@ -95,7 +95,7 @@ export default function Home({children}: PropsWithChildren) {
         files.map((file, index) => {
           const fileExt = getFileExt(file)
           if (fileExt === null) return null
-          let link: React.ReactElement
+          let link: React.ReactElement | null = null
           switch(fileExt) {
             case 'pdf':
               link = (
@@ -110,6 +110,14 @@ export default function Home({children}: PropsWithChildren) {
                 <Link href={`/htmlview/${file}`}>
                   {file}
                   <Chip color="secondary">HTML</Chip>
+                </Link>
+              )
+              break
+            case 'epub':
+              link = (
+                <Link href={`/ebookview/${file}`}>
+                  {file}
+                  <Chip color="secondary">EPUB</Chip>
                 </Link>
               )
               break

@@ -20,7 +20,10 @@ const HTMLView: React.FC = () => {
   const router = useRouter()
 
   useEffect(() => {
-    loadHTML(fileName).then(src => setIframeSrc(src))
+    loadHTML(fileName).then(src => {
+      console.log('src:', src)
+      setIframeSrc(src)
+    })
   }, [fileName])
 
   return (
@@ -31,7 +34,11 @@ const HTMLView: React.FC = () => {
       >
         Home
       </Button>
-      {iframeSrc && <iframe src={iframeSrc} className="w-full h-full"></iframe>}
+      {iframeSrc && 
+        <iframe src={iframeSrc} 
+          className="w-full h-full"
+          sandbox="allow-scripts"
+        ></iframe>}
     </div>
   )
 }
