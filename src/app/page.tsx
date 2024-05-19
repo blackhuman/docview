@@ -39,7 +39,7 @@ function getFileExt(fileName: string): FileType | null {
   return fileName.slice(fileNameSplitIndex + 1) as FileType
 }
 
-export default function Home({children}: PropsWithChildren) {
+export default function Home() {
   const [files, setFiles] = useState<string[]>([])
 
   const updateFiles = useCallback(async () => {
