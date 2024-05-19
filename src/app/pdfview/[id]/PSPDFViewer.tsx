@@ -7,6 +7,7 @@ type Params = {
   id: string
 }
 
+// need "pspdfkit-lib" in project "public" folder, as it will can be access by http://host/pspdfkit-lib URL after deploy.
 async function loadPDF(fileName: string, container: HTMLDivElement, pdfInstanceRef: MutableRefObject<Instance | null>): Promise<Instance> {
   const rootDir = await navigator.storage.getDirectory()
   const fileHandle = await rootDir.getFileHandle(fileName, { create: false })

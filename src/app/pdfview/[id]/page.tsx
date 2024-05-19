@@ -2,14 +2,15 @@
 import dynamic from 'next/dynamic'
 import { useState } from 'react';
 import { Select, SelectItem } from '@nextui-org/react'
+import EmbedPDFViewer from './EmbedPDFViewer'
 
 const PSPDFViewer = dynamic(() => import('./PSPDFViewer'), {ssr: false})
 const PDFJSViewer = dynamic(() => import('./PDFJSViewer'), {ssr: false})
-type PDFRenderMode = 'pspdf' | 'pdfjs'
+type PDFRenderMode = 'pspdf' | 'pdfjs' | 'embed'
 
 export default function Page() {
-  const [renderMode, setRenderMode] = useState<PDFRenderMode>('pdfjs')
-  const renderModeCandidate = ['pspdf', 'pdfjs']
+  const [renderMode, setRenderMode] = useState<PDFRenderMode>('embed')
+  const renderModeCandidate = ['pspdf', 'pdfjs', 'embed']
 
   return (
     <div className="w-full h-full">
@@ -27,6 +28,7 @@ export default function Page() {
       </Select>
       {renderMode === 'pspdf' && <PSPDFViewer />}
       {renderMode === 'pdfjs' && <PDFJSViewer />}
+      {renderMode === 'embed' && <EmbedPDFViewer />}
     </div>
   )
 }
