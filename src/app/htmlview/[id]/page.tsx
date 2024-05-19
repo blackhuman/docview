@@ -44,3 +44,5 @@ const HTMLView: React.FC = () => {
 }
 
 export default HTMLView
+
+export const runtime = 'edge'

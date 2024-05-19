@@ -129,3 +129,5 @@ const ListboxWrapper: React.FC<PropsWithChildren> = ({children}) => (
 );
 
 export default Page
+
+export const runtime = 'edge'
