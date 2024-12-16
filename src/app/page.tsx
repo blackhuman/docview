@@ -87,7 +87,7 @@ export default function Home() {
   }
 
   return (
-    <div 
+    (<div 
       onDrop={onDrop} 
       onDragOver={onDragOver} 
       className='w-full h-full grid grid-cols-5'>
@@ -95,7 +95,7 @@ export default function Home() {
         files.map((file, index) => {
           const fileExt = getFileExt(file)
           if (fileExt === null) return null
-          let link: React.ReactElement | null = null
+          let link: React.ReactElement<any> | null = null
           switch(fileExt) {
             case 'pdf':
               link = (
@@ -130,6 +130,6 @@ export default function Home() {
           )
         }).filter(v => v !== null)
       }
-    </div>
+    </div>)
   );
 }
