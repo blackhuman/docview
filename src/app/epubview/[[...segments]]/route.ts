@@ -46,13 +46,19 @@ async function decoratePage({ blob, path, manifest, basePath }: {
     const componentFragment = document.createRange().createContextualFragment(componentString)
     document.body.appendChild(componentFragment)
 
-    document.body.style.width = '80%'
+    document.body.style.width = '60%'
     document.body.style.height = '100%'
     document.body.style.margin = '0 auto'
+
     const style = document.createElement('link')
     style.rel = 'stylesheet'
     style.href = '/styles.css'
     document.head.appendChild(style)
+    const styleRest = document.createElement('link')
+    styleRest.rel = 'stylesheet'
+    styleRest.href = '/styles-rest.css'
+    document.head.appendChild(styleRest)
+
     document.querySelectorAll('svg').forEach(svg => {
       svg.setAttribute('preserveAspectRatio', 'xMinYMin')
     })

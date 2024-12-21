@@ -8,17 +8,19 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "style": "pnpm exec tailwindcss -i public/globals.css -o public/styles.css --watch"
+    "style": "pnpm exec tailwindcss -i public/globals.css -o public/styles.css"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.10",
-    "@relba/epubparser": "^1.0.0",
+    "@relba/epubparser": "link:/Users/august/Developer/Github/obsidian-epub-importer/src/lib/EpubParser",
     "@tabler/icons-react": "^3.10.0",
     "@types/bun": "^1.1.14",
     "@vercel/blob": "^0.27.0",
     "@xmldom/xmldom": "^0.9.5",
+    "adm-zip": "^0.5.16",
     "cheerio": "^1.0.0",
     "epubjs": "^0.3.93",
+    "es-toolkit": "^1.30.1",
     "framer-motion": "^11.0.25",
     "linkedom": "^0.18.6",
     "next": "15.1.0",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.11.0",
     "@testing-library/react": "^15.0.7",
+    "@types/adm-zip": "^0.5.7",
     "@types/node": "^20",
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2",

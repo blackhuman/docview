@@ -10,5 +10,6 @@ export class Manifest {
   toc: {
     name: string,
     index: number,
+    indexRange: [number, number]
   }[] = []
 }

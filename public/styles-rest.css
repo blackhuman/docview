@@ -1,0 +1,4 @@
+.toc {
+  --navbar-height: 3rem;
+  height: calc(100vh - var(--navbar-height) - 1px);
+}

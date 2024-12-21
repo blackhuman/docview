@@ -3,11 +3,14 @@ import fs from 'fs/promises'
 import path from 'path'
 import { mkdir } from "node:fs/promises"
 import process from 'process'
+import AdmZip from 'adm-zip';
+
 
 // @ts-ignore
 globalThis.DOMParser = DOMParser;
 import EpubParser, { Section } from '@relba/epubparser';
 import { Manifest } from '@/manifest';
+import { minBy } from 'es-toolkit'
 
 /*
 {
@@ -52,10 +55,14 @@ async function processEpub({epubPath, outputPath}: {epubPath: string, outputPath
   manifest.cover = getOutputRelativePath(parser.coverPath)
   manifest.spineFiles = parser.sections.map(v => getOutputRelativePath(v.url))
 
-  for (const chapter of parser.toc) {
+  for (const [xml, chapter] of parser.toc.entries()) {
+    const indices = chapter.sections.map(v => getSectionIndex(v))
+    const minIndex = minBy(indices, v => v)!
+    const maxIndex = Math.max(...indices)
     manifest.toc.push({
       name: chapter.name,
-      index: getSectionIndex(chapter.sections[0])
+      index: minIndex,
+      indexRange: [minIndex, maxIndex]
     })
     // if (chapter.name === 'Contents') {
     //   formatPrint('section count', chapter.sections.length)
@@ -70,13 +77,16 @@ async function processEpub({epubPath, outputPath}: {epubPath: string, outputPath
   await fs.rm(outputPath, {recursive: true, force: true})
   await fs.mkdir(outputPath, {recursive: true})
 
-  for (const file of manifest.spineFiles) {
-    const source = path.resolve(parser.tmpPath, file)
-    const target = path.resolve(outputPath, file)
-    // console.log('target', target, path.dirname(target))
-    await fs.mkdir(path.dirname(target), {recursive: true})
-    await fs.copyFile(source, target)
-  }
+  // for (const file of manifest.spineFiles) {
+  //   const source = path.resolve(parser.tmpPath, file)
+  //   const target = path.resolve(outputPath, file)
+  //   // console.log('target', target, path.dirname(target))
+  //   await fs.mkdir(path.dirname(target), {recursive: true})
+  //   await fs.copyFile(source, target)
+  // }
+
+  const zip = new AdmZip(epubPath);
+  zip.extractAllTo(outputPath, true);
 
   await fs.writeFile(
     path.resolve(outputPath, 'manifest.json'),
