@@ -4,11 +4,11 @@ import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { JSDOM } from 'jsdom';
 import React from 'react';
-import { Decorator } from './Decorator';
 import { getPrisma } from '@/app/utils/prisma';
+import Decorator from './Decorator';
 
-const ReactDOMServer = (await import('react-dom/server')).default
-
+const { renderToString } = await import('react-dom/server')
+    
 async function loadManifest(id: string): Promise<Manifest> {
   const manifestPath = `${id}/manifest.json`;
   const blobContent = await readBlobFile(manifestPath);
@@ -34,11 +34,11 @@ async function decoratePage({ blob, path, manifest, basePath }: {
   }
 
   try {
+    console.log('start parsing HTML')
     const dom = new JSDOM(await blob.text())
     const document = dom.window.document
-
-    const decorator = await Decorator({ manifest, basePath, path })
-    const componentString = ReactDOMServer.renderToStaticMarkup(decorator)
+    const decorator = <Decorator manifest={manifest} basePath={basePath} path={path} />
+    const componentString = renderToString(decorator)
     const componentFragment = document.createRange().createContextualFragment(componentString)
     document.body.appendChild(componentFragment)
 
@@ -58,8 +58,7 @@ async function decoratePage({ blob, path, manifest, basePath }: {
     document.querySelectorAll('svg').forEach(svg => {
       svg.setAttribute('preserveAspectRatio', 'xMinYMin')
     })
-    // console.log('document', document.toString())
-    const targetBlob = new Blob([dom.serialize()], { type: 'text/html' })
+    const targetBlob = new Blob([document.documentElement.outerHTML], { type: 'text/html' })
     // console.log('targetBlob', await targetBlob.text())
     return targetBlob
   } catch (error) {
@@ -97,6 +96,7 @@ export async function GET(
     console.log('redirect path', path)
     redirect(`/${basePath}/${path}`)
   }
+  console.log('render path', path)
   if (path.endsWith('.html')) {
     await prisma.entry.update({
       where: { id },
