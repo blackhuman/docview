@@ -2,7 +2,7 @@ import { readBlobFile } from '@/app/actions/blob';
 import { Manifest } from '@/manifest';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
-import { parseHTML } from 'linkedom';
+import { JSDOM } from 'jsdom';
 import React from 'react';
 import { Decorator } from './Decorator';
 import { getPrisma } from '@/app/utils/prisma';
@@ -34,13 +34,8 @@ async function decoratePage({ blob, path, manifest, basePath }: {
   }
 
   try {
-    const {
-      // note, these are *not* globals
-      window, document, customElements,
-      HTMLElement,
-      Event, CustomEvent
-      // other exports ..
-    } = parseHTML(await blob.text())
+    const dom = new JSDOM(await blob.text())
+    const document = dom.window.document
 
     const decorator = await Decorator({ manifest, basePath, path })
     const componentString = ReactDOMServer.renderToStaticMarkup(decorator)
@@ -64,7 +59,7 @@ async function decoratePage({ blob, path, manifest, basePath }: {
       svg.setAttribute('preserveAspectRatio', 'xMinYMin')
     })
     // console.log('document', document.toString())
-    const targetBlob = new Blob([document.toString()], { type: 'text/html' })
+    const targetBlob = new Blob([dom.serialize()], { type: 'text/html' })
     // console.log('targetBlob', await targetBlob.text())
     return targetBlob
   } catch (error) {
