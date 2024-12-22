@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parseHTML } from 'linkedom';
 import React from 'react';
 import { Decorator } from './Decorator';
+import { getPrisma } from '@/app/utils/prisma';
 
 const ReactDOMServer = (await import('react-dom/server')).default
 
@@ -83,23 +84,42 @@ export async function GET(
   console.log('segments', segments)
   const [id, ...sections] = segments
   console.log('sections', sections);
+  const basePath = `epubview/${id}`
 
-  if (sections.length > 0) {
-    try {
-      const manifest = await loadManifest(id);
-      const path = sections.join('/')
-      console.log('content path', path)
-      const contentBlob = await loadContent(id, path, manifest);
-      return new NextResponse(await decoratePage({ blob: contentBlob, path, manifest, basePath: `epubview/${id}` }));
-    } catch (error) {
-      console.error(error);
-      return new NextResponse('Not Found', { status: 404 });
-    }
-  } else {
-    const manifest = await loadManifest(id);
+  const prisma = await getPrisma()
+  const manifest = await loadManifest(id);
+  const path = sections.join('/')
+  console.log('content path', path)
+  const entry = await prisma.entry.findUnique({ where: { id }})
+  if (path === '' && entry?.readingPath) {
+    const path = entry.readingPath
+    console.log('redirect path', path)
+    redirect(`/${basePath}/${path}`)
+  }
+  if (path === '') {
     const index = manifest.toc[0].index
     const path = manifest.spineFiles[index]
     console.log('redirect path', path)
-    redirect(`${id}/${path}`)
+    redirect(`/${basePath}/${path}`)
   }
+  if (path.endsWith('.html')) {
+    await prisma.entry.update({
+      where: { id },
+      data: {
+        readingPath: path
+      }
+    })
+  }
+  const contentBlob = await loadContent(id, path, manifest);
+  return new NextResponse(await decoratePage({ blob: contentBlob, path, manifest, basePath }));
+
+  // if (sections.length > 0) {
+    
+  // } else {
+  //   const manifest = await loadManifest(id);
+  //   const index = manifest.toc[0].index
+  //   const path = manifest.spineFiles[index]
+  //   console.log('redirect path', path)
+  //   redirect(`${id}/${path}`)
+  // }
 }

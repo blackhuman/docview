@@ -19,6 +19,7 @@ export async function Decorator(props: DecoratorProps) {
   const nextPath = nextIndex < manifest.spineFiles.length ? manifest.spineFiles[nextIndex] : null
   return (
     <div className='absolute top-0 left-0 w-0 h-0'>
+      <a className='fixed top-2 left-2' href='/'>Home</a>
       <ul id='toc' className='fixed top-5 left-2 list-none p-0 m-0 flex flex-col items-start overflow-y-scroll toc'>
         {manifest.toc.map(tocItem => {
           const indexRange = range(tocItem.indexRange[0], tocItem.indexRange[1] + 1)
