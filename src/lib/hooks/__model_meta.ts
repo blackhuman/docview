@@ -59,12 +59,14 @@ const metadata = {
                 }, title: {
                     name: "title",
                     type: "String",
-                }, pathPrefix: {
-                    name: "pathPrefix",
+                }, originalFile: {
+                    name: "originalFile",
                     type: "String",
+                    isOptional: true,
                 }, readingPath: {
                     name: "readingPath",
                     type: "String",
+                    isOptional: true,
                 }, entryType: {
                     name: "entryType",
                     type: "String",

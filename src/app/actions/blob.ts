@@ -1,6 +1,6 @@
 'use server'
 
-import { head } from '@vercel/blob'
+import { head, put } from '@vercel/blob'
 
 export async function readBlobFile(url: string) {
   try {

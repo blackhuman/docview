@@ -22,13 +22,13 @@ model User {
 
 /// Post model
 model Entry {
-  id          String   @id() @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt()
-  title       String
-  pathPrefix  String
-  readingPath String
-  entryType   String
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
+  id           String   @id() @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
+  title        String
+  originalFile String?
+  readingPath  String?
+  entryType    String
+  author       User     @relation(fields: [authorId], references: [id])
+  authorId     String
 }
