@@ -83,7 +83,7 @@ async function processEpubFile(epubFileUrl: string, remoteDirPath: string) {
   const zip = new AdmZip(epubPath);
   zip.extractAllTo(outputPath, true);
 
-  await uploadFolderToRemote(outputPath, remoteDirPath, (filesUploaded, totalFiles, percent) => {
+  await uploadFolderToRemote(outputPath, remoteDirPath, 5, (filesUploaded, totalFiles, percent) => {
     console.log('upload progress', filesUploaded, totalFiles, percent)
   });
 

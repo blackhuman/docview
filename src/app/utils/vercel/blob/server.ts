@@ -1,6 +1,7 @@
 import { put, PutBlobResult } from '@vercel/blob';
 import { readFile, readdir, stat } from 'fs/promises';
 import path from 'path';
+import { TaskRunner } from '@/app/utils/task-runner';
 
 /**
  * Upload a file to Vercel Blob from the server side
@@ -35,14 +36,17 @@ export async function uploadBlobToRemote(content: Buffer | string, remoteBlobPat
 }
 
 /**
- * Upload all files in a directory to Vercel Blob
+ * Upload all files in a directory to Vercel Blob with parallel processing
  * @param localDirPath Directory path to upload
+ * @param remoteDirPath Remote directory path in blob storage
+ * @param concurrency Maximum number of concurrent uploads (default: 4)
  * @param onProgress Optional callback for upload progress (filesUploaded, totalFiles, percent)
  * @returns Array of upload results
  */
 export async function uploadFolderToRemote(
   localDirPath: string,
   remoteDirPath: string,
+  concurrency = 4,
   onProgress?: (filesUploaded: number, totalFiles: number, percent: number) => void
 ): Promise<PutBlobResult[]> {
   const results: PutBlobResult[] = [];
@@ -53,30 +57,13 @@ export async function uploadFolderToRemote(
     throw new Error(`Not a directory: ${localDirPath}`);
   }
 
-  // Count total files first
-  async function countFiles(dir: string): Promise<number> {
+  // Collect all file paths and count them
+  async function collectFiles(dirPath: string): Promise<{ 
+    files: { localPath: string; blobPath: string }[];
+    count: number;
+  }> {
+    const files: { localPath: string; blobPath: string }[] = [];
     let count = 0;
-    const entries = await readdir(dir);
-    
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry);
-      const entryStats = await stat(fullPath);
-      
-      if (entryStats.isDirectory()) {
-        count += await countFiles(fullPath);
-      } else {
-        count++;
-      }
-    }
-    
-    return count;
-  }
-
-  const totalFiles = await countFiles(localDirPath);
-  let filesUploaded = 0;
-
-  async function uploadFiles(dirPath: string): Promise<PutBlobResult[]> {
-    const localResults: PutBlobResult[] = [];
     const entries = await readdir(dirPath);
 
     for (const entry of entries) {
@@ -84,25 +71,37 @@ export async function uploadFolderToRemote(
       const entryStats = await stat(fullPath);
 
       if (entryStats.isDirectory()) {
-        // Recursively upload subdirectory
-        const subResults = await uploadFiles(fullPath);
-        localResults.push(...subResults);
+        const result = await collectFiles(fullPath);
+        files.push(...result.files);
+        count += result.count;
       } else {
-        // Calculate relative path and final blob path
         const relativePath = path.relative(localDirPath, fullPath);
         const blobPath = path.join(remoteDirPath, relativePath);
-        
-        // Upload file with the calculated blob path
-        const blob = await uploadFileToRemote(fullPath, blobPath);
-        localResults.push(blob);
-        filesUploaded++;
-        onProgress?.(filesUploaded, totalFiles, Math.round((filesUploaded / totalFiles) * 100));
+        files.push({ localPath: fullPath, blobPath });
+        count++;
       }
     }
 
-    return localResults;
+    return { files, count };
   }
 
-  results.push(...await uploadFiles(localDirPath));
+  // Collect all files and get total count
+  const { files: filesToUpload, count: totalFiles } = await collectFiles(localDirPath);
+  let filesUploaded = 0;
+
+  const taskRunner = new TaskRunner(concurrency)
+  for (const file of filesToUpload) {
+    const task = async () => {
+      const result = await uploadFileToRemote(file.localPath, file.blobPath);
+      results.push(result);
+      filesUploaded++;
+      onProgress?.(filesUploaded, totalFiles, Math.round((filesUploaded / totalFiles) * 100));
+    }
+    taskRunner.addTask(task)
+  }
+  console.log('taskRunner start')
+  await taskRunner.run()
+  console.log('taskRunner done')
+
   return results;
 }
