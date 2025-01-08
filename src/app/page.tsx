@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 import { 
-  useCreateEntry, useFindManyEntry ,
+  useFindManyEntry ,
   useFindFirstUser, 
   Provider as ZenStackHooksProvider
 } from '@/lib/hooks'
@@ -9,10 +9,10 @@ import Login from "./login";
 import DraggableUpload from './components/DraggableUpload';
 import React from 'react';
 import { PutBlobResult } from '@vercel/blob';
+import { createEntry } from '@/app/actions/entry';
 
 export default function Home() {
   const { data: entries } = useFindManyEntry()
-  const { trigger: createEntry } = useCreateEntry()
   const { data: user } = useFindFirstUser()
 
   async function onUploadStart(filename: string) {
@@ -21,12 +21,9 @@ export default function Home() {
 
   async function onUploadFinish(filename: string, result: PutBlobResult) {
     console.log('onUploadFinish', filename, result)
-    await createEntry({ 
-      data: { 
-        title: filename, 
-        entryType: 'epub', 
-        author: { connect: { id: user?.id } } 
-      }
+    await createEntry({
+      title: filename, 
+      entryType: 'epub', 
     })
   }
 

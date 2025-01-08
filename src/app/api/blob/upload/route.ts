@@ -6,6 +6,7 @@ import { processEpub } from '@/app/utils/parse-epub';
 import { downloadFileStream } from '@/app/utils/download';
 import AdmZip from 'adm-zip';
 import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
+import { createJob } from '@/app/utils/job';
 
 export async function POST(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
@@ -69,6 +70,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
 async function processEpubFile(epubFileUrl: string, remoteDirPath: string) {
 
+  const job = createJob()
   // create temp directories
   const tempDir = path.join(process.cwd(), 'temp');
   const epubPath = path.join(tempDir, 'book.epub');

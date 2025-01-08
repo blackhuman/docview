@@ -4,12 +4,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+enum JobStage {
+  INIT
+  PRE_PROCESSING
+  PROCESSING
+  POST_PROCESSING
+  DONE
 }
 
 /// User model
@@ -31,4 +40,16 @@ model Entry {
   entryType    String
   author       User     @relation(fields: [authorId], references: [id])
   authorId     String
+  job          Job?
+}
+
+model Job {
+  id        String   @id() @default(cuid())
+  entry     Entry    @relation(fields: [entryId], references: [id])
+  entryId   String   @unique()
+  progress  Int      @default(0)
+  stage     JobStage @default(INIT)
+  done      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
 }
