@@ -1,27 +1,26 @@
-import { LocalCache, setLocalCache } from './local-cache'
+import { LocalCache } from './local-cache'
+import { Bus } from 'baconjs'
+import { SSEType } from './sse-type'
 
 export type JobStage = 'INIT' | 'PRE_PROCESSING' | 'PROCESSING' | 'POST_PROCESSING' | 'DONE'
 
 export interface Job {
   entryId: string
-  progress: number
+  progress?: number
   stage: JobStage
 }
 
-const jobLocalCache = new LocalCache('job')
+const jobs = new Map<string, Job>()
+const bus = new Bus<Map<string, Job>>()
+const property = bus.toProperty(jobs)
 
-export function createJob(entryId: string) {
-  return jobLocalCache.set(entryId, {
-    entryId,
-    progress: 0,
-    stage: 'INIT',
-  })
+export function updateJob(job: Job) {
+  jobs.set(job.entryId, job)
+  bus.push(jobs)
 }
 
-export function updateJob(entryId: string, job: Job) {
-  return jobLocalCache.set(entryId, job)
+export function getJobs() {
+  return bus
 }
 
-export function getJob(entryId: string) {
-  return jobLocalCache.get(entryId)
-}
+export type SSEJob = SSEType<Map<string, Job>>

@@ -30,9 +30,27 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.10.0
         version: 3.10.0(react@19.0.0)
+      '@tanstack/react-query':
+        specifier: ^5.63.0
+        version: 5.63.0(react@19.0.0)
+      '@trpc/client':
+        specifier: 11.0.0-rc.688
+        version: 11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4)
+      '@trpc/next':
+        specifier: 11.0.0-rc.688
+        version: 11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/react-query@11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(next@15.1.0(@babel/core@7.24.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4)
+      '@trpc/react-query':
+        specifier: 11.0.0-rc.688
+        version: 11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4)
+      '@trpc/server':
+        specifier: 11.0.0-rc.688
+        version: 11.0.0-rc.688(typescript@5.4.4)
       '@types/bun':
         specifier: ^1.1.14
         version: 1.1.14
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.5.13
       '@vercel/blob':
         specifier: ^0.27.0
         version: 0.27.0
@@ -48,6 +66,9 @@ importers:
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
+      baconjs:
+        specifier: ^3.0.19
+        version: 3.0.19
       cheerio:
         specifier: ^1.0.0
         version: 1.0.0
@@ -81,9 +102,18 @@ importers:
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
+      superjson:
+        specifier: ^2.2.2
+        version: 2.2.2
       swr:
         specifier: ^2.2.5
         version: 2.2.5(react@19.0.0)
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
     devDependencies:
       '@cloudflare/next-on-pages':
         specifier: ^1.11.0
@@ -2075,6 +2105,14 @@ packages:
   '@tabler/icons@3.10.0':
     resolution: {integrity: sha512-jCMO+hDTw8Gn1CNb15zIENLQ9b0UplGXtjMnEUhDoKH+Q4fta8tBLUxZpPpFtpV+q+gzGqfM76xNAoD1GBpmnA==}
 
+  '@tanstack/query-core@5.62.16':
+    resolution: {integrity: sha512-9Sgft7Qavcd+sN0V25xVyo0nfmcZXBuODy3FVG7BMWTg1HMLm8wwG5tNlLlmSic1u7l1v786oavn+STiFaPH2g==}
+
+  '@tanstack/react-query@5.63.0':
+    resolution: {integrity: sha512-QWizLzSiog8xqIRYmuJRok9VELlXVBAwtINgVCgW1SNvamQwWDO5R0XFSkjoBEj53x9Of1KAthLRBUC5xmtVLQ==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@tanstack/react-virtual@3.10.9':
     resolution: {integrity: sha512-OXO2uBjFqA4Ibr2O3y0YMnkrRWGVNqcvHQXmGvMu6IK8chZl3PrDxFXdGZ2iZkSrKh3/qUYoFqYe+Rx23RoU0g==}
     peerDependencies:
@@ -2102,6 +2140,44 @@ packages:
   '@tootallnate/once@2.0.0':
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
+
+  '@trpc/client@11.0.0-rc.688':
+    resolution: {integrity: sha512-e+2efSrqMrBjtAK6DxVvtkwX0kj+5ww7eZSyxHcoC0rjP1CYXl8HUUcWrSHpzOZEYt1Ey9E9o/zFlKKNeTGKWg==}
+    peerDependencies:
+      '@trpc/server': 11.0.0-rc.688+87ea49ed1
+      typescript: '>=5.7.2'
+
+  '@trpc/next@11.0.0-rc.688':
+    resolution: {integrity: sha512-XcxbQE/Rr55sclTI3eFh87CXE/HielLpe+fTZCnGj9/yRmlGdBBshjRN9sluIOvIE7AMnurfe+VNU2q2N3Ufcw==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.59.15
+      '@trpc/client': 11.0.0-rc.688+87ea49ed1
+      '@trpc/react-query': 11.0.0-rc.688+87ea49ed1
+      '@trpc/server': 11.0.0-rc.688+87ea49ed1
+      next: '*'
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      typescript: '>=5.7.2'
+    peerDependenciesMeta:
+      '@tanstack/react-query':
+        optional: true
+      '@trpc/react-query':
+        optional: true
+
+  '@trpc/react-query@11.0.0-rc.688':
+    resolution: {integrity: sha512-V9vj5cN4ct0ju9lGeFv/POOuitNPAq9qrPv+zBJV82m336pLr81jBBQtZ1b4Dc+uFiyMD+Ld4SZtvD9joMJlpg==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.62.8
+      '@trpc/client': 11.0.0-rc.688+87ea49ed1
+      '@trpc/server': 11.0.0-rc.688+87ea49ed1
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+      typescript: '>=5.7.2'
+
+  '@trpc/server@11.0.0-rc.688':
+    resolution: {integrity: sha512-nv1uJFMWFnD5Y+pt2rECXTYZ2J8WZMKesNU3DbPxZYUcmLXo18sKRYTlJGjVr5amJ58L3Z5F4JNrFO3GV0DsEQ==}
+    peerDependencies:
+      typescript: '>=5.7.2'
 
   '@ts-morph/common@0.11.1':
     resolution: {integrity: sha512-7hWZS0NRpEsNV8vWJzg7FEz6V8MaLNeJOmwmghqUXTpzk16V1LLZhdo+4QvE/+zv4cVci0OviuJFnqhEfoV3+g==}
@@ -2674,6 +2750,9 @@ packages:
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
     engines: {node: '>= 0.4'}
+
+  baconjs@3.0.19:
+    resolution: {integrity: sha512-/h7R6hTql8yk1FxYk/bTALea7fGcSJrUoLHFhX1WEkfI4C2mbR4sPbaNd0EhUIDJi3QwTBWEFHh7xEAaz3A3/A==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -5518,6 +5597,10 @@ packages:
     resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
     engines: {node: '>=10'}
 
+  superjson@2.2.2:
+    resolution: {integrity: sha512-5JRxVqC8I8NuOUjzBbvVJAKNM8qoVuH0O77h4WInc/qC2q5IreqKxYwgkga3PfA22OayK2ikceb/B26dztPl+Q==}
+    engines: {node: '>=16'}
+
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -6113,18 +6196,6 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@8.16.0:
-    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   ws@8.18.0:
     resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
     engines: {node: '>=10.0.0'}
@@ -6213,8 +6284,8 @@ packages:
     peerDependencies:
       zod: ^3.18.0
 
-  zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
 snapshots:
 
@@ -8798,6 +8869,13 @@ snapshots:
 
   '@tabler/icons@3.10.0': {}
 
+  '@tanstack/query-core@5.62.16': {}
+
+  '@tanstack/react-query@5.63.0(react@19.0.0)':
+    dependencies:
+      '@tanstack/query-core': 5.62.16
+      react: 19.0.0
+
   '@tanstack/react-virtual@3.10.9(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@tanstack/virtual-core': 3.10.9
@@ -8828,6 +8906,36 @@ snapshots:
       '@types/react': 19.0.1
 
   '@tootallnate/once@2.0.0': {}
+
+  '@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4)':
+    dependencies:
+      '@trpc/server': 11.0.0-rc.688(typescript@5.4.4)
+      typescript: 5.4.4
+
+  '@trpc/next@11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/react-query@11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(next@15.1.0(@babel/core@7.24.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4)':
+    dependencies:
+      '@trpc/client': 11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4)
+      '@trpc/server': 11.0.0-rc.688(typescript@5.4.4)
+      next: 15.1.0(@babel/core@7.24.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      typescript: 5.4.4
+    optionalDependencies:
+      '@tanstack/react-query': 5.63.0(react@19.0.0)
+      '@trpc/react-query': 11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4)
+
+  '@trpc/react-query@11.0.0-rc.688(@tanstack/react-query@5.63.0(react@19.0.0))(@trpc/client@11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4))(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.4.4)':
+    dependencies:
+      '@tanstack/react-query': 5.63.0(react@19.0.0)
+      '@trpc/client': 11.0.0-rc.688(@trpc/server@11.0.0-rc.688(typescript@5.4.4))(typescript@5.4.4)
+      '@trpc/server': 11.0.0-rc.688(typescript@5.4.4)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      typescript: 5.4.4
+
+  '@trpc/server@11.0.0-rc.688(typescript@5.4.4)':
+    dependencies:
+      typescript: 5.4.4
 
   '@ts-morph/common@0.11.1':
     dependencies:
@@ -9367,8 +9475,8 @@ snapshots:
       tslib: 2.8.1
       upper-case-first: 2.0.2
       uuid: 9.0.1
-      zod: 3.22.4
-      zod-validation-error: 1.5.0(zod@3.22.4)
+      zod: 3.24.1
+      zod-validation-error: 1.5.0(zod@3.24.1)
 
   '@zenstackhq/sdk@2.10.2(@prisma/client@6.1.0(prisma@6.1.0))':
     dependencies:
@@ -9396,8 +9504,8 @@ snapshots:
       ts-japi: 1.11.4
       upper-case-first: 2.0.2
       url-pattern: 1.0.3
-      zod: 3.22.4
-      zod-validation-error: 1.5.0(zod@3.22.4)
+      zod: 3.24.1
+      zod-validation-error: 1.5.0(zod@3.24.1)
     transitivePeerDependencies:
       - '@prisma/client'
 
@@ -9665,6 +9773,8 @@ snapshots:
   axe-core@4.10.2: {}
 
   axobject-query@4.1.0: {}
+
+  baconjs@3.0.19: {}
 
   balanced-match@1.0.2: {}
 
@@ -11587,7 +11697,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.0.0
-      ws: 8.16.0
+      ws: 8.18.0
       xml-name-validator: 5.0.0
     optionalDependencies:
       canvas: 2.11.2
@@ -11821,9 +11931,9 @@ snapshots:
       stoppable: 1.1.0
       undici: 5.28.4
       workerd: 1.20240404.0
-      ws: 8.16.0
+      ws: 8.18.0
       youch: 3.3.3
-      zod: 3.22.4
+      zod: 3.24.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -11840,9 +11950,9 @@ snapshots:
       stoppable: 1.1.0
       undici: 5.28.4
       workerd: 1.20240512.0
-      ws: 8.16.0
+      ws: 8.18.0
       youch: 3.3.3
-      zod: 3.22.4
+      zod: 3.24.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -12845,6 +12955,10 @@ snapshots:
     dependencies:
       copy-anything: 3.0.5
 
+  superjson@2.2.2:
+    dependencies:
+      copy-anything: 3.0.5
+
   supports-color@5.5.0:
     dependencies:
       has-flag: 3.0.0
@@ -13544,8 +13658,6 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.16.0: {}
-
   ws@8.18.0: {}
 
   xdg-app-paths@5.1.0:
@@ -13633,14 +13745,14 @@ snapshots:
       vscode-languageserver: 8.1.0
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.0.8
-      zod: 3.22.4
-      zod-validation-error: 1.5.0(zod@3.22.4)
+      zod: 3.24.1
+      zod-validation-error: 1.5.0(zod@3.24.1)
     transitivePeerDependencies:
       - '@prisma/client'
       - supports-color
 
-  zod-validation-error@1.5.0(zod@3.22.4):
+  zod-validation-error@1.5.0(zod@3.24.1):
     dependencies:
-      zod: 3.22.4
+      zod: 3.24.1
 
-  zod@3.22.4: {}
+  zod@3.24.1: {}

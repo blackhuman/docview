@@ -70,6 +70,10 @@ const metadata = {
                 }, entryType: {
                     name: "entryType",
                     type: "String",
+                }, processed: {
+                    name: "processed",
+                    type: "Boolean",
+                    attributes: [{ "name": "@default", "args": [{ "value": true }] }],
                 }, author: {
                     name: "author",
                     type: "User",
@@ -82,70 +86,12 @@ const metadata = {
                     type: "String",
                     isForeignKey: true,
                     relationField: 'author',
-                }, job: {
-                    name: "job",
-                    type: "Job",
-                    isDataModel: true,
-                    isOptional: true,
-                    backLink: 'entry',
                 },
             }
             , uniqueConstraints: {
                 id: {
                     name: "id",
                     fields: ["id"]
-                },
-            }
-            ,
-        }
-        ,
-        job: {
-            name: 'Job', fields: {
-                id: {
-                    name: "id",
-                    type: "String",
-                    isId: true,
-                    attributes: [{ "name": "@default", "args": [] }],
-                }, entry: {
-                    name: "entry",
-                    type: "Entry",
-                    isDataModel: true,
-                    backLink: 'job',
-                    isRelationOwner: true,
-                    foreignKeyMapping: { "id": "entryId" },
-                }, entryId: {
-                    name: "entryId",
-                    type: "String",
-                    isForeignKey: true,
-                    relationField: 'entry',
-                }, progress: {
-                    name: "progress",
-                    type: "Int",
-                    attributes: [{ "name": "@default", "args": [{ "value": 0 }] }],
-                }, stage: {
-                    name: "stage",
-                    type: "JobStage",
-                    attributes: [{ "name": "@default", "args": [] }],
-                }, done: {
-                    name: "done",
-                    type: "Boolean",
-                }, createdAt: {
-                    name: "createdAt",
-                    type: "DateTime",
-                    attributes: [{ "name": "@default", "args": [] }],
-                }, updatedAt: {
-                    name: "updatedAt",
-                    type: "DateTime",
-                    attributes: [{ "name": "@updatedAt", "args": [] }],
-                },
-            }
-            , uniqueConstraints: {
-                id: {
-                    name: "id",
-                    fields: ["id"]
-                }, entryId: {
-                    name: "entryId",
-                    fields: ["entryId"]
                 },
             }
             ,

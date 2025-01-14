@@ -7,6 +7,5 @@
 
 export * from './user';
 export * from './entry';
-export * from './job';
 export { Provider } from '@zenstackhq/swr/runtime';
 export { default as metadata } from './__model_meta';

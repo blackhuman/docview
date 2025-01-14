@@ -40,31 +40,10 @@ model Entry {
     originalFile      String? // original file before parsed, e.g. "xx.epub" file
     readingPath String? // user last reading path
     entryType String
-    author    User     @relation(fields: [authorId], references: [id]) @default(auth())
+    processed Boolean @default(true)
+    author    User     @relation(fields: [authorId], references: [id])
     authorId  String
 
     // full access by author
     @@allow('all', author == auth())
-}
-
-enum JobStage {
-    INIT
-    PRE_PROCESSING // before processing, e.g. unzip
-    PROCESSING // processing, e.g. parse
-    POST_PROCESSING // after processing
-    DONE
-}
-
-model Job {
-    id String @id @default(cuid())
-    entry Entry @relation(fields: [entryId], references: [id])
-    entryId String @unique
-    progress Int @default(0)
-    stage JobStage @default(INIT)
-    done Boolean
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    // full access by author
-    @@allow('all', entry.author == auth())
 }

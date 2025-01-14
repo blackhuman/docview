@@ -1,12 +1,6 @@
+import { processEpubFile } from '@/app/actions/process-epub';
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises'
-import path from 'path'
-import { processEpub } from '@/app/utils/parse-epub';
-import { downloadFileStream } from '@/app/utils/download';
-import AdmZip from 'adm-zip';
-import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
-import { createJob } from '@/app/utils/job';
 
 export async function POST(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
@@ -14,7 +8,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   const epubFileUrl = searchParams.get('testEpubFileUrl');
   if (epubFileUrl) {
     // for quick testing
-    await processEpubFile(epubFileUrl, 'abc')
+    await processEpubFile('abc', epubFileUrl, 'abc')
     return NextResponse.json({ success: true })
   }
   const body = (await request.json()) as HandleUploadBody;
@@ -45,9 +39,9 @@ export async function POST(request: Request): Promise<NextResponse> {
         // ⚠️ This will not work on `localhost` websites,
         // Use ngrok or similar to get the full upload flow
 
-        console.log('blob upload completed', blob, tokenPayload);
-        await processEpubFile(blob.downloadUrl, 'abc')
-        console.log('processEpubFile completed')
+        // console.log('blob upload completed', blob, tokenPayload);
+        // await processEpubFile(blob.downloadUrl, 'abc')
+        // console.log('processEpubFile completed')
 
         try {
           // Run any logic after the file upload completed
@@ -66,37 +60,4 @@ export async function POST(request: Request): Promise<NextResponse> {
       { status: 400 }, // The webhook will retry 5 times waiting for a 200
     );
   }
-}
-
-async function processEpubFile(epubFileUrl: string, remoteDirPath: string) {
-
-  const job = createJob()
-  // create temp directories
-  const tempDir = path.join(process.cwd(), 'temp');
-  const epubPath = path.join(tempDir, 'book.epub');
-  const outputPath = path.join(tempDir, 'output');
-
-  await fs.mkdir(tempDir, { recursive: true });
-
-  // Download file using the utility function
-  await downloadFileStream(epubFileUrl, epubPath);
-
-  // Unzip epub file to outputPath
-  const zip = new AdmZip(epubPath);
-  zip.extractAllTo(outputPath, true);
-
-  await uploadFolderToRemote(outputPath, remoteDirPath, 5, (filesUploaded, totalFiles, percent) => {
-    console.log('upload progress', filesUploaded, totalFiles, percent)
-  });
-
-  // process epub
-  const manifest = await processEpub(epubPath, outputPath);
-  await uploadBlobToRemote(
-    JSON.stringify(manifest),
-    remoteDirPath + '/manifest.json'
-  )
-
-  // cleanup
-  await fs.rm(tempDir, { recursive: true, force: true });
-
 }

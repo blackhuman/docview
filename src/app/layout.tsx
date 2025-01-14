@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers as NextUIProvider } from "./providers";
+import { TRPCProvider } from "./_trpc/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,15 +13,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" className="light">
       <body className={`${inter.className} w-screen h-screen`}>
-        <NextUIProvider>
-          {children}
-        </NextUIProvider>
+        <TRPCProvider>
+          <NextUIProvider>
+            {children}
+          </NextUIProvider>
+        </TRPCProvider>
       </body>
     </html>
   );

@@ -159,6 +159,6 @@ export function useCountEntry<T extends Prisma.EntryCountArgs>(args?: Prisma.Sub
     return request.useModelQuery('Entry', 'count', args, options);
 }
 
-export function useCheckEntry(args: { operation: PolicyCrudKind; where?: { id?: string; title?: string; originalFile?: string; readingPath?: string; entryType?: string; authorId?: string }; }, options?: QueryOptions<boolean>) {
+export function useCheckEntry(args: { operation: PolicyCrudKind; where?: { id?: string; title?: string; originalFile?: string; readingPath?: string; entryType?: string; processed?: boolean; authorId?: string }; }, options?: QueryOptions<boolean>) {
     return request.useModelQuery('Entry', 'check', args, options);
 }
