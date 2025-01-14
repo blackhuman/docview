@@ -10,17 +10,26 @@ export interface Job {
   stage: JobStage
 }
 
-const jobs = new Map<string, Job>()
-const bus = new Bus<Map<string, Job>>()
-const property = bus.toProperty(jobs)
+const jobs = new Map<string, Map<string, Job>>()
+const bus = new Map<string, Bus<Map<string, Job>>>()
 
-export function updateJob(job: Job) {
-  jobs.set(job.entryId, job)
-  bus.push(jobs)
+export function updateJob(userId: string, job: Job) {
+  initJob(userId)
+  const userJobs = jobs.get(userId)!
+  userJobs.set(job.entryId, job)
+  bus.get(userId)?.push(userJobs)
 }
 
-export function getJobs() {
-  return bus
+export function getJobs(userId: string) {
+  initJob(userId)
+  return bus.get(userId)!
+}
+
+function initJob(userId: string) {
+  if (!jobs.has(userId)) {
+    jobs.set(userId, new Map())
+    bus.set(userId, new Bus())
+  }
 }
 
 export type SSEJob = SSEType<Map<string, Job>>

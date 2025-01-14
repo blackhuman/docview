@@ -1,4 +1,5 @@
-import { processEpubFile } from '@/app/actions/process-epub';
+import { processEpubFileForUser } from '@/app/actions/process-epub';
+import { createClient } from '@/app/utils/supabase/server';
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
 
@@ -6,9 +7,15 @@ export async function POST(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
   const epubFileUrl = searchParams.get('testEpubFileUrl');
+  const supabase = await createClient()
+  const { data: { user }} = await supabase.auth.getUser()
+  const userId = user?.id
+  if (!userId) {
+    return NextResponse.json({ success: false }) 
+  }
   if (epubFileUrl) {
     // for quick testing
-    await processEpubFile('abc', epubFileUrl, 'abc')
+    await processEpubFileForUser(userId, 'abc', epubFileUrl, 'abc')
     return NextResponse.json({ success: true })
   }
   const body = (await request.json()) as HandleUploadBody;

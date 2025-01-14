@@ -6,9 +6,13 @@ import AdmZip from 'adm-zip';
 import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
 import { Job, updateJob } from '@/app/utils/job';
 
-export async function processEpubFile(entryId: string, epubFileUrl: string, remoteDirPath: string) {
+export async function processEpubFileForUser(userId: string, entryId: string, epubFileUrl: string, remoteDirPath: string) {
 
-  updateJob({entryId, stage: 'PRE_PROCESSING'})
+  function updateJobForUser(job: Job) {
+    updateJob(userId, job)
+  }
+  
+  updateJobForUser({entryId, stage: 'PRE_PROCESSING'})
   // create temp directories
   const tempDir = path.join(process.cwd(), 'temp');
   const epubPath = path.join(tempDir, 'book.epub');
@@ -25,10 +29,10 @@ export async function processEpubFile(entryId: string, epubFileUrl: string, remo
 
   await uploadFolderToRemote(outputPath, remoteDirPath, 5, (filesUploaded, totalFiles, percent) => {
     console.log('upload progress', filesUploaded, totalFiles, percent)
-    updateJob({entryId, stage: 'PRE_PROCESSING', progress: percent})
+    updateJobForUser({entryId, stage: 'PRE_PROCESSING', progress: percent})
   });
 
-  updateJob({entryId, stage: 'PROCESSING'})
+  updateJobForUser({entryId, stage: 'PROCESSING'})
   // process epub
   const manifest = await processEpub(epubPath, outputPath);
   await uploadBlobToRemote(
@@ -36,9 +40,9 @@ export async function processEpubFile(entryId: string, epubFileUrl: string, remo
     remoteDirPath + '/manifest.json'
   )
 
-  updateJob({entryId, stage: 'POST_PROCESSING'})
+  updateJobForUser({entryId, stage: 'POST_PROCESSING'})
   // cleanup
   await fs.rm(tempDir, { recursive: true, force: true })
 
-  updateJob({entryId, stage: 'DONE'})
+  updateJobForUser({entryId, stage: 'DONE'})
 }

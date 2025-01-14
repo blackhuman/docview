@@ -11,10 +11,12 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { TRPCClientError } from '@trpc/client';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Home() {
-  const { data: entries } = useFindManyEntry()
+  const { data: entries, mutate } = useFindManyEntry()
   // const { data: user } = useFindFirstUser()
+  const queryClient = useQueryClient();
   const jobsSubscription = trpc.job.list.useSubscription(undefined, {
     onData(jobs) {
       console.log('jobs', jobs)
@@ -26,6 +28,24 @@ export default function Home() {
       console.log('jobs started')
     }
   })
+
+  trpc.entry.list.useSubscription(undefined, {
+    onData(entries) {
+      console.log('entries', entries)
+      mutate()
+    },
+    onError(err) {
+      console.error('entries error', err)
+    },
+    onStarted() {
+      console.log('entries started')
+    }
+  })
+
+  useEffect(() => {
+    const keys = queryClient.getQueryCache().getAll().map(v => v.queryKey).join(',')
+    console.log('keys', keys)
+  }, [])
 
   // useEffect(() => {
   //   if (jobsSubscription.error instanceof TRPCClientError) {

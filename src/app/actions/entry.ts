@@ -2,7 +2,9 @@
 
 import { getPrisma } from '@/app/utils/prisma'
 import { supabase } from '@/lib/supabase'
-import { processEpubFile } from './process-epub'
+import { processEpubFileForUser } from './process-epub'
+import { notifyEntry } from '@/app/utils/entry-observable'
+import { asyncRun } from '../utils/async-run'
 
 interface CreateEntry {
   title: string
@@ -28,24 +30,19 @@ export async function createEntry({ title, entryType, originalFile }: CreateEntr
     }
   })
 
-  processEpubFile(entry.id, originalFile, entry.id)
-    .then(() => {
-      console.log('processEpubFile completed')
-      return client.entry.update({
-        where: {
-          id: entry.id
-        },
-        data: {
-          processed: true
-        }
-      })
+  asyncRun(async () => {
+    await processEpubFileForUser(userId, entry.id, originalFile, entry.id)
+    console.log('processEpubFile completed')
+    await client.entry.update({
+      where: {
+        id: entry.id
+      },
+      data: {
+        processed: true
+      }
     })
-    .then(() => {
-      console.log('processed entry updated, entryId:', entry.id)
-    })
-    .catch((err) => {
-      console.error('processEpubFile error, entryId:', entry.id, err)
-    })
+    notifyEntry(userId)
+  })
 
   return entry
 }
