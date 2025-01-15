@@ -1,10 +1,9 @@
 import { Property, Value } from 'baconjs'
 import { Bus } from 'baconjs'
+import * as Bacon from 'baconjs'
 
-const bus = new Bus<number>()
+const bus = new Bus<void>()
 // bus.onValue(v => console.log('onValue', v))
-bus.firstToPromise().then(v => console.log('value', v))
-bus.push(1)
-// bus.firstToPromise().then(v => console.log('value', v))
-// bus.push(2)
-// bus.toProperty(3).firstToPromise().then(v => console.log('value2', v))
+bus.onValue(v => console.log('onValue', v))
+bus.push()
+bus.push()

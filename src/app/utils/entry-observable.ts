@@ -1,19 +1,21 @@
 import { Bus } from 'baconjs';
-
-const bus = new Map<string, Bus<void>>()
+import { globalEntryBus, globalRandom } from './singleton';
 
 export function notifyEntry(userId: string) {
   initBus(userId)
-  bus.get(userId)?.push()
+  const userBus = globalEntryBus.get(userId)!
+  console.log('notifyEntry', userId, globalRandom)
+  userBus.push()
 }
 
 export function getBus(userId: string) {
   initBus(userId)
-  return bus.get(userId)!
+  console.log('getEntryBus', userId, globalRandom)
+  return globalEntryBus.get(userId)!
 }
 
 function initBus(userId: string) {
-  if (!bus.has(userId)) {
-    bus.set(userId, new Bus())
+  if (!globalEntryBus.has(userId)) {
+    globalEntryBus.set(userId, new Bus())
   }
 }

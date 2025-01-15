@@ -5,13 +5,27 @@ import { downloadFileStream } from '@/app/utils/download';
 import AdmZip from 'adm-zip';
 import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
 import { Job, updateJob } from '@/app/utils/job';
+import * as Bacon from 'baconjs';
+
+export async function mockProcessEpubFileForUser(userId: string, entryId: string, epubFileUrl: string, remoteDirPath: string) {
+  return new Promise((resolve, reject) => {
+    Bacon.interval(2000, 1)
+      .take(5)
+      .scan(0, (a, b) => a + b)
+      .doAction(v => {
+        console.log('mockProcessEpubFileForUser', v, userId)
+        updateJob(userId, {entryId, stage: 'PRE_PROCESSING', progress: v})
+      })
+      .onEnd(() => resolve(null))
+  })
+}
 
 export async function processEpubFileForUser(userId: string, entryId: string, epubFileUrl: string, remoteDirPath: string) {
 
   function updateJobForUser(job: Job) {
     updateJob(userId, job)
   }
-  
+
   updateJobForUser({entryId, stage: 'PRE_PROCESSING'})
   // create temp directories
   const tempDir = path.join(process.cwd(), 'temp');

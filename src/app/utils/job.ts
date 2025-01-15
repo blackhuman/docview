@@ -1,6 +1,7 @@
 import { LocalCache } from './local-cache'
 import { Bus } from 'baconjs'
 import { SSEType } from './sse-type'
+import { globalJobs, globalJobsBus, globalRandom } from './singleton'
 
 export type JobStage = 'INIT' | 'PRE_PROCESSING' | 'PROCESSING' | 'POST_PROCESSING' | 'DONE'
 
@@ -10,25 +11,27 @@ export interface Job {
   stage: JobStage
 }
 
-const jobs = new Map<string, Map<string, Job>>()
-const bus = new Map<string, Bus<Map<string, Job>>>()
-
 export function updateJob(userId: string, job: Job) {
   initJob(userId)
-  const userJobs = jobs.get(userId)!
+  const userJobs = globalJobs.get(userId)!
   userJobs.set(job.entryId, job)
-  bus.get(userId)?.push(userJobs)
+  const userBus = globalJobsBus.get(userId)
+  console.log('updateJob', userId, globalRandom)
+  userBus?.push(userJobs)
 }
 
 export function getJobs(userId: string) {
   initJob(userId)
-  return bus.get(userId)!
+  const userBus = globalJobsBus.get(userId)!
+  console.log('getJobs', userId, globalRandom)
+  return userBus
 }
 
 function initJob(userId: string) {
-  if (!jobs.has(userId)) {
-    jobs.set(userId, new Map())
-    bus.set(userId, new Bus())
+  if (!globalJobs.has(userId)) {
+    console.log('initJob', userId, globalRandom)
+    globalJobs.set(userId, new Map())
+    globalJobsBus.set(userId, new Bus())
   }
 }
 

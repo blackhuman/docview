@@ -1,8 +1,17 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+async function getCookies() {
+  try {
+    return await cookies()
+  } catch {
+    console.warn('first build, cookies not available')
+  }
+}
+
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = await getCookies()
+  if (!cookieStore) return
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,4 +35,11 @@ export async function createClient() {
       },
     }
   )
+}
+
+export async function getUserId() {
+  const supabase = await createClient()
+  if (!supabase) return
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.user?.id
 }

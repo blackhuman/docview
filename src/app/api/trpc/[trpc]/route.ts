@@ -10,7 +10,8 @@ const handler = async (req: NextRequest) => {
     router: appRouter,
     createContext: async () => {
       const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const response = await supabase?.auth.getUser();
+      const user = response?.data.user ?? null;
       return { user };
     },
     onError:

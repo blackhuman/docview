@@ -13,22 +13,17 @@ export function getClient() {
       splitLink({
         // uses the httpSubscriptionLink for subscriptions
         condition: (op) => {
-          console.log('condition', op.type)
           return op.type === 'subscription'
         },
         true: unstable_httpSubscriptionLink({
           url: `/api/trpc`,
           transformer: {
             serialize(object) {
-              console.log('subscription serialize before', object)
               const result = superjson.serialize(object)
-              console.log('subscription serialize after', result)
               return result
             },
             deserialize(object) {
-              console.log('subscription deserialize before', object)
               const result = superjson.deserialize(object)
-              console.log('subscription deserialize after', result)
               return result
             },
           },
