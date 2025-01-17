@@ -1,6 +1,7 @@
 import { Bus } from 'baconjs'
 import { Job } from './job'
 import { v4 as uuidv4 } from 'uuid'
+import { Entry } from '@prisma/client';
 
 // @ts-ignore
 console.log('globalThis.globalJobs', globalThis.globalRandom)
@@ -8,13 +9,13 @@ console.log('globalThis.globalJobs', globalThis.globalRandom)
 declare const globalThis: {
   globalJobs: Map<string, Map<string, Job>>;
   globalJobsBus: Map<string, Bus<Map<string, Job>>>;
-  globalEntryBus: Map<string, Bus<void>>;
+  globalEntryBus: Map<string, Bus<any>>;
   globalRandom: string;
 } & typeof global;
 
 const globalJobs = globalThis.globalJobs ?? new Map<string, Map<string, Job>>()
 const globalJobsBus = globalThis.globalJobsBus ?? new Map<string, Bus<Map<string, Job>>>()
-const globalEntryBus = globalThis.globalEntryBus ?? new Map<string, Bus<void>>()
+const globalEntryBus = globalThis.globalEntryBus ?? new Map<string, Bus<any>>()
 const globalRandom = globalThis.globalRandom ?? uuidv4()
 
 if (process.env.NODE_ENV !== 'production') {
@@ -22,6 +23,18 @@ if (process.env.NODE_ENV !== 'production') {
   globalThis.globalJobsBus = globalJobsBus
   globalThis.globalEntryBus = globalEntryBus
   globalThis.globalRandom = globalRandom
+}
+
+export function initBus(userId: string) {
+  if (!globalEntryBus.has(userId)) {
+    globalEntryBus.set(userId, new Bus())
+  }
+  if (!globalJobsBus.has(userId)) {
+    globalJobsBus.set(userId, new Bus())
+  }
+  if (!globalJobs.has(userId)) {
+    globalJobs.set(userId, new Map())
+  }
 }
 
 export { globalJobs, globalJobsBus, globalEntryBus, globalRandom }

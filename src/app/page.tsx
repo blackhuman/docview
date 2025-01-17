@@ -13,7 +13,7 @@ import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
-import { createEntry, notifyEntryAction, printUser } from '@/app/actions/entry';
+import { createEntry, notifyEntryAction, printUser, updateEntry } from '@/app/actions/entry';
 import { updateJobAction } from './actions/job';
 import { Button } from '@nextui-org/react';
 
@@ -117,12 +117,17 @@ export default function Home() {
                     <span>{jobs.get(entry.id)?.progress ?? '0'}</span>
                   </>
                 }
-                <button 
-                  onClick={() => handleDelete(entry.id)}
+                <Button
+                  onPress={() => handleDelete(entry.id)}
                   className="text-red-500 hover:text-red-700 hidden group-hover:block"
                 >
                   Delete
-                </button>
+                </Button>
+                <Button 
+                  onPress={() => updateEntry(entry.id, true)}
+                  className="hidden group-hover:block">
+                    updateEntry
+                </Button>
               </div>
             )
           })}

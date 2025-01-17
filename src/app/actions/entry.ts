@@ -55,3 +55,15 @@ export async function createEntry({ title, entryType, originalFile }: CreateEntr
 
   return entry
 }
+
+export async function updateEntry(id: string, processed: boolean) {
+  const client = await getPrisma()
+  return await client.entry.update({
+    where: {
+      id
+    },
+    data: {
+      processed
+    }
+  })
+}
