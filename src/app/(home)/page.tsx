@@ -9,14 +9,14 @@ import {
   useUpdateEntry
 } from '@/lib/hooks'
 import Login from "./login";
-import DraggableUpload from './components/DraggableUpload';
+import DraggableUpload from '@/app/components/DraggableUpload';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
 import { createEntryAction, notifyEntryAction, printUser } from '@/app/actions/entry';
-import { updateJobAction } from './actions/job';
+import { updateJobAction } from '@/app/actions/job';
 import { Button } from '@nextui-org/react';
 
 export default function Home() {
@@ -130,7 +130,7 @@ export default function Home() {
             let entryType = 'entry'
             switch (entry.entryType) {
               case 'epub':
-                entryType = 'epubview'
+                entryType = 'epubview2'
                 break
             }
             return (

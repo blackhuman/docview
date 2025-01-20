@@ -75,7 +75,7 @@ export async function GET(
   { params }: { params: Params }
 ) {
   const { segments = [] } = await params;
-  console.log('segments', segments)
+  console.log('segments in orignal epubview', segments)
   const [id, ...sections] = segments
   console.log('sections', sections);
   const basePath = `epubview/${id}`

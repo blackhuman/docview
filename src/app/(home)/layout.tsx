@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { Providers as NextUIProvider } from "./providers";
 import { TRPCProvider } from "@/app/_trpc/Provider";
 import SWRProvider from "@/app/_swr/Provider";
