@@ -10,6 +10,7 @@ interface CreateEntry {
   title: string
   entryType: string
   originalFile: string
+  authorId: string
 }
 
 export async function printUser() {
@@ -22,48 +23,16 @@ export async function notifyEntryAction() {
   notifyEntry(userId!)
 }
 
-export async function createEntry({ title, entryType, originalFile }: CreateEntry) {
-  const client = await getPrisma()
+export async function createEntryAction(data: { data: CreateEntry }) {
   const userId = await getUserId()
-  
-  if (!userId) {
-    throw new Error('Not authenticated')
-  }
-
-  const entry = await client.entry.create({
-    data: {
-      title,
-      entryType,
-      originalFile,
-      authorId: userId
-    }
+  if (!userId) return
+  const prisma = await getPrisma()
+  console.log('createEntryAction', data)
+  const entryId = await prisma.entry.create({
+    data: {...data.data},
   })
-
-  asyncRun(async () => {
-    await mockProcessEpubFileForUser(userId, entry.id, originalFile, entry.id)
-    console.log('processEpubFile completed')
-    await client.entry.update({
-      where: {
-        id: entry.id
-      },
-      data: {
-        processed: true
-      }
-    })
-    notifyEntry(userId)
-  })
-
-  return entry
-}
-
-export async function updateEntry(id: string, processed: boolean) {
-  const client = await getPrisma()
-  return await client.entry.update({
-    where: {
-      id
-    },
-    data: {
-      processed
-    }
-  })
+  console.log('createEntryAction after', entryId)
+  const entryResult = await prisma.entry.findFirst({where: {id: entryId.id}})
+  console.log('createEntryAction after select', entryResult)
+  return entryId
 }

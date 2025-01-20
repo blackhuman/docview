@@ -3,7 +3,6 @@ import { globalEntryBus, globalRandom, initBus } from './singleton';
 
 export function notifyEntry(userId: string) {
   initBus(userId)
-  const userBus = globalEntryBus.get(userId)!
   console.log('notifyEntry', userId, globalRandom)
   // userBus.push({i}})
 }
@@ -11,5 +10,5 @@ export function notifyEntry(userId: string) {
 export function getBus(userId: string) {
   initBus(userId)
   console.log('getEntryBus', userId, globalRandom)
-  return globalEntryBus.get(userId)!
+  return globalEntryBus.filter(v => v.db === 'entry' && v.data.authorId === userId)
 }

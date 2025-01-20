@@ -4,23 +4,40 @@ import { processEpub } from '@/app/utils/parse-epub';
 import { downloadFileStream } from '@/app/utils/download';
 import AdmZip from 'adm-zip';
 import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
-import { Job, updateJob } from '@/app/utils/job';
+import { deleteJob, Job, updateJob } from '@/app/utils/job';
 import * as Bacon from 'baconjs';
+import { getPrisma } from '../utils/prisma';
 
-export async function mockProcessEpubFileForUser(userId: string, entryId: string, epubFileUrl: string, remoteDirPath: string) {
+export async function mockProcessEpubFileForUser(userId: string, entryId: string) {
   return new Promise((resolve, reject) => {
     Bacon.interval(2000, 1)
       .take(5)
       .scan(0, (a, b) => a + b)
       .doAction(v => {
-        console.log('mockProcessEpubFileForUser', v, userId)
+        console.log('mockProcessEpubFileForUser v', v, userId)
         updateJob(userId, {entryId, stage: 'PRE_PROCESSING', progress: v})
       })
-      .onEnd(() => resolve(null))
+      .onEnd(() => {
+        deleteJob(userId, entryId)
+        resolve(null)
+      })
   })
 }
 
-export async function processEpubFileForUser(userId: string, entryId: string, epubFileUrl: string, remoteDirPath: string) {
+export async function processEpubFileForUser(userId: string, entryId: string) {
+  const prisma = await getPrisma()
+  const entry = await prisma.entry.findFirst({where: {id: entryId, authorId: userId}})
+  if (!entry) {
+    throw new Error('Entry not found')
+  }
+
+  const { originalFile: epubFileUrl, id: remoteDirPath, processed } = entry
+  if (!epubFileUrl) {
+    throw new Error('Epub file not found')
+  }
+  if (processed) {
+    throw new Error('Epub file already processed')
+  }
 
   function updateJobForUser(job: Job) {
     updateJob(userId, job)
@@ -59,4 +76,6 @@ export async function processEpubFileForUser(userId: string, entryId: string, ep
   await fs.rm(tempDir, { recursive: true, force: true })
 
   updateJobForUser({entryId, stage: 'DONE'})
+  deleteJob(userId, entryId)
+
 }

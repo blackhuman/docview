@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error, data } = await supabase.auth.exchangeCodeForSession(code)
+    const { error, data } = await supabase!.auth.exchangeCodeForSession(code)
     if (!error) {
       const prisma = await getPrisma()
       const user = await prisma.user.findUnique({ where: { id: data.user.id }})

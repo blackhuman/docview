@@ -4,7 +4,9 @@ import {
   useFindManyEntry ,
   useFindFirstUser, 
   useDeleteEntry,
-  Provider as ZenStackHooksProvider
+  Provider as ZenStackHooksProvider,
+  useCreateEntry,
+  useUpdateEntry
 } from '@/lib/hooks'
 import Login from "./login";
 import DraggableUpload from './components/DraggableUpload';
@@ -13,13 +15,15 @@ import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
-import { createEntry, notifyEntryAction, printUser, updateEntry } from '@/app/actions/entry';
+import { createEntryAction, notifyEntryAction, printUser } from '@/app/actions/entry';
 import { updateJobAction } from './actions/job';
 import { Button } from '@nextui-org/react';
 
 export default function Home() {
-  const { data: entries, mutate } = useFindManyEntry()
-  // const { data: user } = useFindFirstUser()
+  const { data: entries, mutate } = useFindManyEntry({orderBy: {createdAt: 'desc'}})
+  const { trigger: createEntry } = useCreateEntry()
+  const { trigger: updateEntryAction } = useUpdateEntry()
+  const { data: user } = useFindFirstUser()
   const queryClient = useQueryClient();
   const { data: jobs = new Map<string, Job>() } = trpc.job.list.useSubscription(undefined, {
     onData(jobs) {
@@ -57,11 +61,17 @@ export default function Home() {
 
   async function onUploadFinish(filename: string, result: PutBlobResult) {
     console.log('onUploadFinish', filename, result)
-    await createEntry({
-      title: filename, 
-      originalFile: result.url,
-      entryType: 'epub', 
+    const entry = await createEntry({
+      data: {
+        title: filename, 
+        originalFile: result.url,
+        entryType: 'epub', 
+        authorId: user!.id,
+        processed: false,
+      }
     })
+    console.log('entry created', entry)
+    mutate()
   }
 
   const { trigger: deleteEntry } = useDeleteEntry()
@@ -84,6 +94,21 @@ export default function Home() {
       progress: 100
     })
   }
+
+  function updateEntry(entityId: string) {
+    updateEntryAction({
+      where: {
+        id: entityId
+      },
+      data: {
+        processed: true
+      }
+    })
+  }
+
+  useEffect(() => {
+    console.log('entries changed', entries)
+  }, [entries])
 
   return (
     <>
@@ -124,7 +149,7 @@ export default function Home() {
                   Delete
                 </Button>
                 <Button 
-                  onPress={() => updateEntry(entry.id, true)}
+                  onPress={() => updateEntry(entry.id)}
                   className="hidden group-hover:block">
                     updateEntry
                 </Button>

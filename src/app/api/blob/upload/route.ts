@@ -13,7 +13,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
   if (epubFileUrl) {
     // for quick testing
-    await processEpubFileForUser(userId, 'abc', epubFileUrl, 'abc')
+    await processEpubFileForUser(userId, 'abc')
     return NextResponse.json({ success: true })
   }
   const body = (await request.json()) as HandleUploadBody;

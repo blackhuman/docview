@@ -27,6 +27,11 @@ export function getJobs(userId: string) {
   return userBus
 }
 
+export function deleteJob(userId: string, entryId: string) {
+  initJob(userId)
+  globalJobs.get(userId)?.delete(entryId)
+}
+
 function initJob(userId: string) {
   if (!globalJobs.has(userId)) {
     console.log('initJob', userId, globalRandom)
