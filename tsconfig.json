@@ -22,7 +22,7 @@
       "@/*": ["./src/*"]
     },
     "types": [
-      "./src/raw-loader.d.ts", "node"
+      "./src/raw-loader.d.ts", "node", "bun"
     ]
   },
   "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],

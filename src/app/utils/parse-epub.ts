@@ -10,7 +10,9 @@ import { minBy } from 'es-toolkit'
 
 // outputPath中必须存在解压后的文件
 export async function processEpub(epubPath: string, outputPath: string) {
-  const parser = new EpubParser(epubPath, false);
+  console.log('start processEpub, epubPath', epubPath)
+  console.log('start processEpub, outputPath', outputPath)
+  const parser = new EpubParser(epubPath, true);
   await parser.init(outputPath)
   formatPrint('parser.meta', parser.meta)
   formatPrint('parser.toc', parser.toc.map(v => v.name))

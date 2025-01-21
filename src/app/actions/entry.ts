@@ -36,3 +36,31 @@ export async function createEntryAction(data: { data: CreateEntry }) {
   console.log('createEntryAction after select', entryResult)
   return entryId
 }
+
+export async function restartEpubProcessingAction(entryId: string) {
+  const prisma = await getPrisma()
+  const entry = await prisma.entry.findFirst({where: {id: entryId}})
+  if (!entry) {
+    throw new Error('Entry not found')
+  }
+  if (entry.entryType !== 'epub') {
+    throw new Error('Entry type is not epub')
+  }
+  await prisma.entry.update({
+    where: {
+      id: entry.id
+    },
+    data: {
+      processed: false
+    }
+  })
+  await processEpubFileForUser(entry.authorId, entry.id)
+  await prisma.entry.update({
+    where: {
+      id: entry.id
+    },
+    data: {
+      processed: true
+    }
+  })
+}

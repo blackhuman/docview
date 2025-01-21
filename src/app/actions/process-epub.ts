@@ -58,11 +58,6 @@ export async function processEpubFileForUser(userId: string, entryId: string) {
   const zip = new AdmZip(epubPath);
   zip.extractAllTo(outputPath, true);
 
-  await uploadFolderToRemote(outputPath, remoteDirPath, 5, (filesUploaded, totalFiles, percent) => {
-    console.log('upload progress', filesUploaded, totalFiles, percent)
-    updateJobForUser({entryId, stage: 'PRE_PROCESSING', progress: percent})
-  });
-
   updateJobForUser({entryId, stage: 'PROCESSING'})
   // process epub
   const manifest = await processEpub(epubPath, outputPath);
@@ -70,6 +65,11 @@ export async function processEpubFileForUser(userId: string, entryId: string) {
     JSON.stringify(manifest),
     remoteDirPath + '/manifest.json'
   )
+
+  await uploadFolderToRemote(outputPath, remoteDirPath, 5, (filesUploaded, totalFiles, percent) => {
+    console.log('upload progress', filesUploaded, totalFiles, percent)
+    updateJobForUser({entryId, stage: 'PRE_PROCESSING', progress: percent})
+  });
 
   updateJobForUser({entryId, stage: 'POST_PROCESSING'})
   // cleanup

@@ -15,7 +15,7 @@ import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
-import { createEntryAction, notifyEntryAction, printUser } from '@/app/actions/entry';
+import { createEntryAction, notifyEntryAction, printUser, restartEpubProcessingAction } from '@/app/actions/entry';
 import { updateJobAction } from '@/app/actions/job';
 import { Button } from '@nextui-org/react';
 
@@ -106,6 +106,10 @@ export default function Home() {
     })
   }
 
+  async function restartProcessing(entryId: string) {
+    await restartEpubProcessingAction(entryId)
+  }
+
   useEffect(() => {
     console.log('entries changed', entries)
   }, [entries])
@@ -152,6 +156,11 @@ export default function Home() {
                   onPress={() => updateEntry(entry.id)}
                   className="hidden group-hover:block">
                     updateEntry
+                </Button>
+                <Button 
+                  onPress={() => restartProcessing(entry.id)}
+                  className="hidden group-hover:block">
+                    restartProcessing
                 </Button>
               </div>
             )
