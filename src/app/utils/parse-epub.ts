@@ -1,5 +1,4 @@
 import { DOMParser } from '@xmldom/xmldom'
-import fs from 'fs/promises'
 import path from 'path'
 
 

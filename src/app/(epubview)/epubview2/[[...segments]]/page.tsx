@@ -1,6 +1,4 @@
 import { readBlobFile } from '@/app/actions/blob';
-import { Head, Html } from 'next/document';
-import { JSDOM } from 'jsdom';
 import { createElement } from 'react';
 import { renderContent } from '@/app/(epubview)/epubview2/[[...segments]]/renderContent';
 import { getPrisma } from '@/app/utils/prisma';
@@ -33,13 +31,11 @@ async function handleDefaultPath(id: string, sections: string[], basePath: strin
   const entry = await prisma.entry.findUnique({ where: { id }})
   if (path === '' && entry?.readingPath) {
     const path = entry.readingPath
-    console.log('redirect path', path)
     redirect(`/${basePath}/${path}`)
   }
   if (path === '') {
     const index = manifest.toc[0].index
     const path = manifest.spineFiles[index]
-    console.log('redirect path', path)
     redirect(`/${basePath}/${path}`)
   }
   console.log('render path', path)
@@ -63,7 +59,7 @@ export default async function Page({ params }: { params: Params }) {
 
   const basePath = `epubview2/${id}`
   const manifest = await loadManifest(id);
-  handleDefaultPath(id, sections, basePath, manifest)
+  await handleDefaultPath(id, sections, basePath, manifest)
   
   const contentBlob = await loadContent(id, path);
   // console.log('document', document.documentElement.outerHTML)

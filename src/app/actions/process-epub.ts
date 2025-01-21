@@ -6,7 +6,7 @@ import AdmZip from 'adm-zip';
 import { uploadBlobToRemote, uploadFolderToRemote } from '@/app/utils/vercel/blob/server';
 import { deleteJob, Job, updateJob } from '@/app/utils/job';
 import * as Bacon from 'baconjs';
-import { getPrisma } from '../utils/prisma';
+import { getPrisma } from '@/app/utils/prisma';
 
 export async function mockProcessEpubFileForUser(userId: string, entryId: string) {
   return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 import { Entry, PrismaClient } from '@prisma/client';
 import { getPrisma } from '.';
 import { globalEntryBus } from '../singleton';
-import { mockProcessEpubFileForUser } from '@/app/actions/process-epub';
+import { mockProcessEpubFileForUser, processEpubFileForUser } from '@/app/actions/process-epub';
 import type { Prisma } from '@zenstackhq/runtime/models'
 
 export async function onEntryCreated(prisma: Prisma.DefaultPrismaClient, entry: Entry) {
@@ -11,9 +11,9 @@ export async function onEntryCreated(prisma: Prisma.DefaultPrismaClient, entry: 
     db: 'entry',
     data: entry,
   })
-  console.log('mockProcessEpubFileForUser', entry)
-  await mockProcessEpubFileForUser(entry.authorId, entry.id)
-  console.log('mockProcessEpubFileForUser end', entry)
+  console.log('processEpubFileForUser', entry)
+  await processEpubFileForUser(entry.authorId, entry.id)
+  console.log('processEpubFileForUser end', entry)
   await prisma.entry.update({
     where: {
       id: entry.id
