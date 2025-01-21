@@ -68,7 +68,7 @@ export default async function Page({ params }: { params: Params }) {
   const { head, body } = await renderContent(await contentBlob.text());
 
   return (
-    <html>
+    <>
       <head>
         {head}
       </head>
@@ -76,6 +76,6 @@ export default async function Page({ params }: { params: Params }) {
         {body}
         <Decorator manifest={manifest} basePath={basePath} path={path} />
       </body>
-    </html>
+    </>
   );
 }

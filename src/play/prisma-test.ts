@@ -1,5 +1,5 @@
 import { Entry, PrismaClient } from '@prisma/client';
-import { globalPrisma } from '../src/app/utils/singleton';
+import { globalPrisma } from '@/app/utils/singleton';
 
 const prisma = globalPrisma
 
