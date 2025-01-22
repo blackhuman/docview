@@ -8,10 +8,10 @@ const compat = new FlatCompat({
 /** @type {import("@eslint/eslintrc").FlatConfig[]} */
 const eslintConfig = [
   ...compat.config({
-    extends: ['next/core-web-vitals'],
-    rules: {
-      '@next/next/no-html-link-for-pages': 'off',
-    }
+    // extends: ['next/core-web-vitals'],
+    // rules: {
+    //   '@next/next/no-html-link-for-pages': 'off',
+    // }
   }),
 ]
 export default eslintConfig
