@@ -2,9 +2,8 @@ import { Entry, PrismaClient } from '@prisma/client';
 import { getPrisma } from '.';
 import { globalEntryBus } from '../singleton';
 import { mockProcessEpubFileForUser, processEpubFileForUser } from '@/app/actions/process-epub';
-import type { Prisma } from '@zenstackhq/runtime/models'
 
-export async function onEntryCreated(prisma: Prisma.DefaultPrismaClient, entry: Entry) {
+export async function onEntryCreated(prisma: PrismaClient, entry: Entry) {
   console.log('onEntryCreated', entry)
   globalEntryBus.push({
     changeType: 'create',

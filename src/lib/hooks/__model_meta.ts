@@ -84,6 +84,8 @@ const metadata = {
                 }, authorId: {
                     name: "authorId",
                     type: "String",
+                    attributes: [{ "name": "@default", "args": [] }],
+                    defaultValueProvider: $default$Entry$authorId,
                     isForeignKey: true,
                     relationField: 'author',
                 },
@@ -104,4 +106,7 @@ const metadata = {
     ,
     authModel: 'User'
 };
+function $default$Entry$authorId(user: any): unknown {
+    return user?.id;
+}
 export default metadata;

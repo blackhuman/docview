@@ -5,7 +5,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@zenstackhq/runtime/models";
 import { type GetNextArgs, type QueryOptions, type InfiniteQueryOptions, type MutationOptions, type PickEnumerable } from '@zenstackhq/swr/runtime';
 import type { PolicyCrudKind } from '@zenstackhq/runtime'
 import metadata from './__model_meta';

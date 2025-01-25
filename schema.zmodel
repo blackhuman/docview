@@ -42,7 +42,7 @@ model Entry {
     entryType String
     processed Boolean @default(true)
     author    User     @relation(fields: [authorId], references: [id])
-    authorId  String
+    authorId  String @default(auth().id)
 
     // full access by author
     @@allow('all', author == auth())

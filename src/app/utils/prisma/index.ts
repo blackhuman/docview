@@ -19,9 +19,13 @@ type PrismaChanges = {
 
 // create an enhanced Prisma client with user context
 export async function getPrisma() {
+  console.log('DATABASE_URL:', process.env.DATABASE_URL)
   const userId = await getUserId()
-  console.log('getPrisma, user:', userId)
-  const zprisma = enhance(globalPrisma, { user: {id: userId ?? ''} });
+  console.log('getPrisma, userId:', userId)
+  // if (!userId) throw new Error('getPrisma, user not found')
+  const user = userId ? {id: userId} : undefined
+  console.log('getPrisma, user:', user)
+  const zprisma = enhance(globalPrisma, { user }, { logPrismaQuery: true });
 
   const xprisma = zprisma.$extends({
     name: 'zenstack',
@@ -51,5 +55,5 @@ export async function getPrisma() {
     }
   })
 
-  return xprisma
+  return zprisma
 }
