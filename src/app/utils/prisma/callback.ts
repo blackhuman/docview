@@ -11,8 +11,14 @@ export async function onEntryCreated(prisma: PrismaClient, entry: Entry) {
     data: entry,
   })
   console.log('processEpubFileForUser', entry)
-  await processEpubFileForUser(entry.authorId, entry.id)
-  console.log('processEpubFileForUser end', entry)
+  switch (entry.entryType) {
+    case 'EPUB':
+      await processEpubFileForUser(entry.authorId, entry.id)
+      console.log('processEpubFileForUser end', entry)
+      break;
+    case 'AUDIO':
+      break
+  }
   await prisma.entry.update({
     where: {
       id: entry.id

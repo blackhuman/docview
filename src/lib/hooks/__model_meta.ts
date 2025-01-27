@@ -69,7 +69,8 @@ const metadata = {
                     isOptional: true,
                 }, entryType: {
                     name: "entryType",
-                    type: "String",
+                    type: "FileType",
+                    attributes: [{ "name": "@default", "args": [] }],
                 }, processed: {
                     name: "processed",
                     type: "Boolean",

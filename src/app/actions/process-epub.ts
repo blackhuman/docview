@@ -27,7 +27,7 @@ export async function mockProcessEpubFileForUser(userId: string, entryId: string
 export async function processEpubFileForUser(userId: string, entryId: string) {
   const prisma = await getPrisma()
   const entry = await prisma.entry.findFirst({where: {id: entryId, authorId: userId}})
-  if (!entry) {
+  if (!entry || entry.entryType !== 'EPUB') {
     throw new Error('Entry not found')
   }
 

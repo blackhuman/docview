@@ -13,9 +13,12 @@
     "db-generate": "npx zenstack generate",
     "db-migrate-prepare": "dotenv -e .env.local -- pnpm exec prisma migrate dev --create-only",
     "db-migrate": "dotenv -e .env.local -- pnpm exec prisma migrate dev",
+    "db-migrate-resolve": "dotenv -e .env.local -- prisma migrate resolve --rolled-back 20250125133714_enum",
+    "db-migrate-checksum": "shasum -a 256 prisma/migrations/20250125133714_enum/migration.sql",
     "update": "npm-check-updates -u @prisma/client prisma zenstack @zenstackhq/*"
   },
   "dependencies": {
+    "@deepgram/sdk": "^3.9.0",
     "@nextui-org/react": "^2.6.8",
     "@prisma/client": "^6.2.1",
     "@relba/epubparser": "^1.0.3",

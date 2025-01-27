@@ -31,6 +31,11 @@ model User {
     @@allow('all', auth() == this)
 }
 
+enum FileType {
+  EPUB
+  AUDIO
+}
+
 /// Post model
 model Entry {
     id        String   @id @default(cuid()) // so as OSS path prefix
@@ -39,7 +44,7 @@ model Entry {
     title     String   @length(1, 256) // for display
     originalFile      String? // original file before parsed, e.g. "xx.epub" file
     readingPath String? // user last reading path
-    entryType String
+    entryType FileType @default(EPUB)
     processed Boolean @default(true)
     author    User     @relation(fields: [authorId], references: [id])
     authorId  String @default(auth().id)

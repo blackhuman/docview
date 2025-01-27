@@ -158,7 +158,8 @@ export function useGroupByEntry<T extends Prisma.EntryGroupByArgs, HasSelectOrTa
 export function useCountEntry<T extends Prisma.EntryCountArgs>(args?: Prisma.Subset<T, Prisma.EntryCountArgs>, options?: QueryOptions<T extends { select: any; } ? T['select'] extends true ? number : Prisma.GetScalarType<T['select'], Prisma.EntryCountAggregateOutputType> : number>) {
     return request.useModelQuery('Entry', 'count', args, options);
 }
+import type { FileType } from '@zenstackhq/runtime/models';
 
-export function useCheckEntry(args: { operation: PolicyCrudKind; where?: { id?: string; title?: string; originalFile?: string; readingPath?: string; entryType?: string; processed?: boolean; authorId?: string }; }, options?: QueryOptions<boolean>) {
+export function useCheckEntry(args: { operation: PolicyCrudKind; where?: { id?: string; title?: string; originalFile?: string; readingPath?: string; entryType?: FileType; processed?: boolean; authorId?: string }; }, options?: QueryOptions<boolean>) {
     return request.useModelQuery('Entry', 'check', args, options);
 }

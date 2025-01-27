@@ -18,6 +18,7 @@ import { Job } from '@/app/utils/job';
 import { createEntryAction, notifyEntryAction, printUser, restartEpubProcessingAction } from '@/app/actions/entry';
 import { updateJobAction } from '@/app/actions/job';
 import { Button } from '@nextui-org/react';
+import { FileType } from '@prisma/client';
 
 export default function Home() {
   const { data: entries, mutate } = useFindManyEntry({orderBy: {createdAt: 'desc'}})
@@ -59,13 +60,13 @@ export default function Home() {
     console.log('onUploadStart', filename)
   }
 
-  async function onUploadFinish(filename: string, result: PutBlobResult) {
+  async function onUploadFinish(filename: string, fileType: FileType, result: PutBlobResult) {
     console.log('onUploadFinish', filename, result)
     const entry = await createEntry({
       data: {
         title: filename, 
         originalFile: result.url,
-        entryType: 'epub', 
+        entryType: fileType, 
         authorId: user!.id,
         processed: false,
       }
@@ -133,8 +134,11 @@ export default function Home() {
           {entries?.map((entry) => {
             let entryType = 'entry'
             switch (entry.entryType) {
-              case 'epub':
+              case 'EPUB':
                 entryType = 'epubview2'
+                break
+              case 'AUDIO':
+                entryType = 'audioview'
                 break
             }
             return (
