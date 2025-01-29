@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getBus } from '@/app/utils/entry-observable';
-import { getPrisma } from '@/app/utils/prisma';
+import { getPrisma, PrismaClientType } from '@/app/utils/prisma';
 import { Entry } from '@prisma/client';
 import * as Bacon from 'baconjs';
 
-const prisma = await getPrisma()
 // prisma.entry.toEventStream()
 //   .onValue(v => console.log('globalEntryBus value2', v))
 
@@ -14,7 +13,7 @@ export const entryRouter = createTRPCRouter({
     .subscription(async function* ({ input, ctx }) {
       const userId = ctx.user.id
       // const bus = getBus(userId)
-      const prisma = await getPrisma()
+      const prisma = ctx.prisma
       const eventStream = prisma.entry.toEventStream()
       const entryEventStream = eventStream
         .filter(v => {

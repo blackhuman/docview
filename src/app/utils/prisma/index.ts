@@ -55,5 +55,7 @@ export async function getPrisma() {
     }
   })
 
-  return zprisma
+  return xprisma
 }
+
+export type PrismaClientType = Awaited<ReturnType<typeof getPrisma>>

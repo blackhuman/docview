@@ -3,14 +3,18 @@ import { createClient } from '@/app/utils/supabase/server';
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { type User } from '@supabase/supabase-js';
+import { getPrisma } from '@/app/utils/prisma';
+import { PrismaClient } from '@prisma/client';
 
 interface CreateContextOptions {
   user: User | null;
 }
 
-export const createInnerTRPCContext = (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
+  const prisma = await getPrisma()
   return {
     user: opts.user,
+    prisma,
   };
 };
 
@@ -19,7 +23,7 @@ export const createTRPCContext = async () => {
   const response = await supabase?.auth.getUser();
   const user = response?.data.user ?? null;
 
-  return createInnerTRPCContext({
+  return await createInnerTRPCContext({
     user,
   });
 };

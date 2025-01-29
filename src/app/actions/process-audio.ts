@@ -10,7 +10,10 @@ export async function processAudioFileForUser(userId: string, entryId: string) {
   }
 
   const remoteDirPath = entry.id
-  const deepgramApiKey = '7c58b55c7d24ad8d7d674d51487f1e45b3fd7529';
+  const deepgramApiKey = process.env.DEEPGRAM_API_KEY
+  if (!deepgramApiKey) {
+    throw new Error('Deepgram API key not found')
+  }
   const deepgram = createClient(deepgramApiKey)
   const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
     { url: entry.originalFile },
@@ -25,6 +28,8 @@ export async function processAudioFileForUser(userId: string, entryId: string) {
     console.log('processAudioFileForUser error', error)
     throw new Error()
   }
+
+  console.log('processAudioFileForUser success.')
 
   await uploadBlobToRemote(
     JSON.stringify(result),

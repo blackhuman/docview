@@ -5,6 +5,9 @@ import { mockProcessEpubFileForUser, processEpubFileForUser } from './process-ep
 import { notifyEntry } from '@/app/utils/entry-observable'
 import { asyncRun } from '../utils/async-run'
 import { getUserId } from '../utils/supabase/server'
+import { processAudioFileForUser } from './process-audio'
+import { copy, del } from '@vercel/blob';
+import { getFileBasename } from '../utils/file-util'
 
 interface CreateEntry {
   title: string
@@ -23,28 +26,11 @@ export async function notifyEntryAction() {
   notifyEntry(userId!)
 }
 
-export async function createEntryAction(data: { data: CreateEntry }) {
-  const userId = await getUserId()
-  if (!userId) return
-  const prisma = await getPrisma()
-  console.log('createEntryAction', data)
-  const entryId = await prisma.entry.create({
-    data: {...data.data},
-  })
-  console.log('createEntryAction after', entryId)
-  const entryResult = await prisma.entry.findFirst({where: {id: entryId.id}})
-  console.log('createEntryAction after select', entryResult)
-  return entryId
-}
-
 export async function restartEpubProcessingAction(entryId: string) {
   const prisma = await getPrisma()
   const entry = await prisma.entry.findFirst({where: {id: entryId}})
   if (!entry) {
     throw new Error('Entry not found')
-  }
-  if (entry.entryType !== 'epub') {
-    throw new Error('Entry type is not epub')
   }
   await prisma.entry.update({
     where: {
@@ -54,12 +40,26 @@ export async function restartEpubProcessingAction(entryId: string) {
       processed: false
     }
   })
-  await processEpubFileForUser(entry.authorId, entry.id)
+  switch (entry.entryType) {
+    case 'EPUB':
+      await processEpubFileForUser(entry.authorId, entry.id)
+      break
+    case 'AUDIO':
+      await processAudioFileForUser(entry.authorId, entry.id)
+      break
+    default:
+      throw new Error('Entry type not supported')
+  }
+  const originalFile = entry.originalFile!
+  const filename = getFileBasename(originalFile)
+  const targetFile = entry.id + '/' + filename
+  await copy(originalFile, targetFile, { access: 'public' })
   await prisma.entry.update({
     where: {
       id: entry.id
     },
     data: {
+      originalFile: targetFile,
       processed: true
     }
   })

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { readBlobFile } from './app/actions/blob'
+import { head } from '@vercel/blob'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -50,11 +52,19 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (request.nextUrl.pathname.endsWith('css')) {
+  const fileExt = getFileExt(request.nextUrl.pathname)
+  console.log('fileExt', fileExt)
+  if (['css', 'mp3'].includes(fileExt)) {
     const url = request.nextUrl.clone()
-    url.pathname = url.pathname.replace('epubview2', 'epubview')
-    console.log('rewrite url', url)
-    return NextResponse.rewrite(url)
+    const pathname = url.pathname
+      .replace('/epubview2/', '')
+      .replace('/epubview/', '')
+      .replace('/audioview/', '')
+    console.log('rewrite url', url.pathname)
+    console.log('rewrite pathname', pathname)
+    const blob = await head(pathname)
+    console.log('rewrite blob', blob.url)
+    return NextResponse.rewrite(blob.url)
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
@@ -71,6 +81,10 @@ export async function updateSession(request: NextRequest) {
   // of sync and terminate the user's session prematurely!
 
   return supabaseResponse
+}
+
+function getFileExt(url: string) {
+  return url.split('.').pop() ?? ''
 }
 
 export async function middleware(request: NextRequest) {

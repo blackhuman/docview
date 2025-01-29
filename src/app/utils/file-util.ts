@@ -7,3 +7,7 @@ export function getFileType(filename: string): FileType | undefined {
   if (ext === 'mp3') return 'AUDIO'
   return undefined
 }
+
+export function getFileBasename(filePath: string) {
+  return filePath.split('/').pop()
+}

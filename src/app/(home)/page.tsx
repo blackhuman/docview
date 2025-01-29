@@ -15,7 +15,7 @@ import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
-import { createEntryAction, notifyEntryAction, printUser, restartEpubProcessingAction } from '@/app/actions/entry';
+import { notifyEntryAction, printUser, restartEpubProcessingAction } from '@/app/actions/entry';
 import { updateJobAction } from '@/app/actions/job';
 import { Button } from '@nextui-org/react';
 import { FileType } from '@prisma/client';

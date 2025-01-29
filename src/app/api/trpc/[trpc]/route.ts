@@ -2,18 +2,14 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "@/server/api/root";
 import { NextRequest } from "next/server";
 import { createClient } from '@/app/utils/supabase/server';
+import { createTRPCContext } from '@/server/api/trpc';
 
 const handler = async (req: NextRequest) => {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: async () => {
-      const supabase = await createClient();
-      const response = await supabase?.auth.getUser();
-      const user = response?.data.user ?? null;
-      return { user };
-    },
+    createContext: createTRPCContext,
     onError:
       process.env.NODE_ENV === "development"
         ? ({ path, error }) => {
