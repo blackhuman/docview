@@ -25,6 +25,7 @@ export async function getPrisma() {
   // if (!userId) throw new Error('getPrisma, user not found')
   const user = userId ? {id: userId} : undefined
   console.log('getPrisma, user:', user)
+  if (!user) throw new Error('getPrisma, user not found')
   const zprisma = enhance(globalPrisma, { user }, { logPrismaQuery: true });
 
   const xprisma = zprisma.$extends({

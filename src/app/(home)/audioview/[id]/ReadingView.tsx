@@ -71,18 +71,19 @@ export function ReadingView({ manifest }: Props) {
       {content.paragraphs.map(paragraph => (
         <p key={paragraph.start} className='pt-2'>
           {paragraph.sentences.map(sentence => (
-            <span 
-              key={sentence.start}
-              className={`group relative items-center ${isCurrentSentence(sentence.start, sentence.end) ? 'bg-yellow-200' : ''} transition-colors duration-200`}
-            >
-              <button
+            <span key={sentence.start}>
+              <span
                 onClick={() => jumpToTime(sentence.start)}
                 className="absolute -left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 title="Play from here"
               >
                 <PlayCircleIcon className="h-5 w-5 text-blue-500 hover:text-blue-600" />
-              </button>
-              {sentence.text + ' '}
+              </span>
+              <span 
+                className={`group relative items-center ${isCurrentSentence(sentence.start, sentence.end) ? 'bg-yellow-200' : ''} transition-colors duration-200`}
+              >
+                {sentence.text + ' '}
+              </span>
             </span>
           ))}
         </p>

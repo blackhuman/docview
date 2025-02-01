@@ -14,6 +14,7 @@ export default async function Page({ params }: { params: Params }) {
   return (
     <>
       <ReadingView manifest={manifest} />
+      <div id='debug'></div>
     </>
   )
 }
