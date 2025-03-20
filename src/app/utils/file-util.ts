@@ -5,6 +5,7 @@ export function getFileType(filename: string): FileType | undefined {
   if (!ext) return undefined
   if (ext === 'epub') return 'EPUB'
   if (ext === 'mp3') return 'AUDIO'
+  if (ext === 'html') return 'HTML'
   return undefined
 }
 

@@ -11,6 +11,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "node_modules/.zenstack/.logical-prisma-client"
 }
 
 enum FileType {
@@ -20,23 +21,31 @@ enum FileType {
 }
 
 /// User model
+/// @@allow('create', true)
+/// @@allow('all', auth() == this)
 model User {
   id       String  @id() @default(cuid())
+  /// @email
+  /// @length(6, 32)
   email    String  @unique()
+  /// @password
+  /// @omit
   password String?
   entries  Entry[]
 }
 
 /// Post model
+/// @@allow('all', author == auth())
 model Entry {
   id           String   @id() @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt()
+  /// @length(1, 256)
   title        String
   originalFile String?
   readingPath  String?
   entryType    FileType @default(EPUB)
   processed    Boolean  @default(true)
   author       User     @relation(fields: [authorId], references: [id])
-  authorId     String
+  authorId     String   @default("")
 }

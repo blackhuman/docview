@@ -1,39 +1,20 @@
-'use client'
-import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import {Button, Chip} from "@nextui-org/react";
+import { getPrisma } from '@/app/utils/prisma';
+import Link from 'next/link';
 
-type Params = {
-  id: string
-}
+type Params = Promise<{ id: string }>
 
-async function loadHTML(fileName: string): Promise<string> {
-  const rootDir = await navigator.storage.getDirectory()
-  const fileHandle = await rootDir.getFileHandle(fileName, { create: false })
-  const file = await fileHandle.getFile()
-  return URL.createObjectURL(file)
-}
-
-const HTMLView: React.FC = () => {
-  const [iframeSrc, setIframeSrc] = useState<string | null>(null)
-  const {id: fileName} = useParams<Params>()
-  const router = useRouter()
-
-  useEffect(() => {
-    loadHTML(fileName).then(src => {
-      console.log('src:', src)
-      setIframeSrc(src)
-    })
-  }, [fileName])
+export default async function Page({ params }: { params: Params }) {
+  const {id} = await params
+  const prisma = await getPrisma()
+  const entry = await prisma.entry.findFirst({ where: { id }})
+  if (!entry || entry.entryType !== 'HTML' || entry.originalFile === null) {
+    throw new Error('Entry not found')
+  }
+  const iframeSrc = `/api/file/${entry.originalFile}`
 
   return (
     <div className="w-full h-full">
-      <Button 
-        className="absolute z-10 top-0 left-0"
-        onClick={() => router.push('/')}
-      >
-        Home
-      </Button>
+      <Link href="/">Home</Link>
       {iframeSrc && 
         <iframe src={iframeSrc} 
           className="w-full h-full"
@@ -42,7 +23,3 @@ const HTMLView: React.FC = () => {
     </div>
   )
 }
-
-export default HTMLView
-
-export const runtime = 'edge'

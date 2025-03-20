@@ -140,6 +140,9 @@ export default function Home() {
               case 'AUDIO':
                 entryType = 'audioview'
                 break
+              case 'HTML':
+                entryType = 'htmlview'
+                break
             }
             return (
               <div key={entry.id} className='flex flex-row items-start gap-2 group'>

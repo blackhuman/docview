@@ -8,6 +8,7 @@ import { getUserId } from '../utils/supabase/server'
 import { processAudioFileForUser } from './process-audio'
 import { copy, del } from '@vercel/blob';
 import { getFileBasename } from '../utils/file-util'
+import { processHtmlFileForUser } from './process-html'
 
 interface CreateEntry {
   title: string
@@ -40,12 +41,16 @@ export async function restartEpubProcessingAction(entryId: string) {
       processed: false
     }
   })
+  console.log('start processing entry, entryType:', entry.entryType)
   switch (entry.entryType) {
     case 'EPUB':
       await processEpubFileForUser(entry.authorId, entry.id)
       break
     case 'AUDIO':
       await processAudioFileForUser(entry.authorId, entry.id)
+      break
+    case 'HTML':
+      await processHtmlFileForUser(entry.authorId, entry.id)
       break
     default:
       throw new Error('Entry type not supported')
