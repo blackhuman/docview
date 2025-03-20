@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Params }) {
           src={iframeSrc}
           // srcDoc={iframeSrcDocText} 
           className="w-full h-full"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          sandbox="allow-scripts allow-same-origin"
           loading="lazy"
           referrerPolicy="no-referrer"
           allow="fullscreen"

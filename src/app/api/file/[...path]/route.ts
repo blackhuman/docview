@@ -45,22 +45,16 @@ export async function GET(request: Request): Promise<Response> {
       headers: {
         'content-type': contentType,
         
-        // Comprehensive CORS headers
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS, HEAD',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        'Access-Control-Allow-Credentials': 'true',
-        
         // Explicitly allow iframe embedding
-        'X-Frame-Options': 'ALLOWALL',
+        // 'X-Frame-Options': 'ALLOWALL',
         
         // Set permissive Content-Security-Policy
-        'Content-Security-Policy': "frame-ancestors *",
+        // 'Content-Security-Policy': "frame-ancestors *",
         
         // Remove any potential cache-related issues
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        // 'Cache-Control': 'no-cache, no-store, must-revalidate',
+        // 'Pragma': 'no-cache',
+        // 'Expires': '0'
       },
     });
 
