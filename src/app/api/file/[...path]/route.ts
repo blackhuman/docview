@@ -33,18 +33,52 @@ export async function GET(request: Request): Promise<Response> {
     // Get the response data
     const data = await response.blob();
     
-    // Create a new response with the same data and headers
+    // Determine content type, ensuring HTML is properly set
+    const contentType = response.headers.get('content-type') || 'text/html';
+    
+    // Create a new response with the same data but with enhanced headers
     const nextResponse = new NextResponse(data, {
       status: response.status,
       headers: {
-        'content-type': response.headers.get('content-type') || 'application/octet-stream',
-        'content-length': response.headers.get('content-length')!
+        // Ensure proper content type
+        'content-type': contentType,
+        'content-length': response.headers.get('content-length')!,
+        
+        // Comprehensive CORS headers
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS, HEAD',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Allow-Credentials': 'true',
+        
+        // Explicitly allow iframe embedding
+        'X-Frame-Options': 'ALLOWALL',
+        
+        // Set permissive Content-Security-Policy
+        'Content-Security-Policy': "frame-ancestors *",
+        
+        // Remove any potential cache-related issues
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
-    })
+    });
     
     return nextResponse;
   } catch (error) {
     console.error('Error fetching content:', error);
     return new Response('Error fetching content', { status: 500 });
   }
+}
+
+// Add OPTIONS handler for CORS preflight requests
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS, HEAD',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }
