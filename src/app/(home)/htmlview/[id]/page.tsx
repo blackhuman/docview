@@ -10,7 +10,7 @@ export default async function Page({ params }: { params: Params }) {
   if (!entry || entry.entryType !== 'HTML' || entry.originalFile === null) {
     throw new Error('Entry not found')
   }
-  const iframeSrc = `/api/file/${entry.originalFile}`
+  const iframeSrc = `https://docview-khaki.vercel.app/api/file/${entry.originalFile}`
 
   return (
     <div className="w-full h-full">
