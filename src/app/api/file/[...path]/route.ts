@@ -4,6 +4,10 @@ export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
   
+  
+  try {
+    console.log('api/file pathname', pathname)
+  
   // Extract the path from the pathname (removing '/api/file/')
   const pathSegments = pathname.split('/').slice(3);
   const filePath = pathSegments.join('/');
@@ -19,8 +23,7 @@ export async function GET(request: Request): Promise<Response> {
   });
 
   console.log('targetUrlWithQuery', targetUrlWithQuery.toString());
-  
-  try {
+
     // Fetch the content from the target URL
     const response = await fetch(targetUrlWithQuery.toString());
     
@@ -32,7 +35,7 @@ export async function GET(request: Request): Promise<Response> {
     
     // Get the response data
     const data = await response.blob();
-    
+
     // Determine content type, ensuring HTML is properly set
     const contentType = response.headers.get('content-type') || 'text/html';
     
@@ -40,9 +43,7 @@ export async function GET(request: Request): Promise<Response> {
     const nextResponse = new NextResponse(data, {
       status: response.status,
       headers: {
-        // Ensure proper content type
         'content-type': contentType,
-        'content-length': response.headers.get('content-length')!,
         
         // Comprehensive CORS headers
         'Access-Control-Allow-Origin': '*',
@@ -60,9 +61,9 @@ export async function GET(request: Request): Promise<Response> {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
-      }
+      },
     });
-    
+
     return nextResponse;
   } catch (error) {
     console.error('Error fetching content:', error);
