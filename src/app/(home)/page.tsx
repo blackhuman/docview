@@ -15,7 +15,7 @@ import { PutBlobResult } from '@vercel/blob';
 import { trpc } from '@/app/_trpc/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Job } from '@/app/utils/job';
-import { notifyEntryAction, printUser, restartEpubProcessingAction } from '@/app/actions/entry';
+import { notifyEntryAction, printUser, restartProcessingAction } from '@/app/actions/entry';
 import { updateJobAction } from '@/app/actions/job';
 import { Button } from '@nextui-org/react';
 import { FileType } from '@prisma/client';
@@ -108,7 +108,7 @@ export default function Home() {
   }
 
   async function restartProcessing(entryId: string) {
-    await restartEpubProcessingAction(entryId)
+    await restartProcessingAction(entryId)
   }
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Home() {
                 break
             }
             return (
-              <div key={entry.id} className='flex flex-row items-start gap-2 group'>
+              <div key={entry.id} className='flex flex-row items-start gap-2 group h-8'>
                 <Link href={`/${entryType}/${entry.id}`}>{entry.title}</Link>
                 {!entry.processed &&
                   <>

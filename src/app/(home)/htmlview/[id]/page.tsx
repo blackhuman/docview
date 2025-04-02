@@ -1,6 +1,7 @@
 import { getPrisma } from '@/app/utils/prisma';
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import styles from './page.module.css';
 
 type Params = Promise<{ id: string }>
 
@@ -11,8 +12,12 @@ export default async function Page({ params }: { params: Params }) {
   if (!entry || entry.entryType !== 'HTML' || entry.originalFile === null) {
     throw new Error('Entry not found')
   }
-  const iframeSrc = `/api/file/${entry.originalFile}`
-  console.log('iframeSrc', iframeSrc)
+  const baseUrl = 'https://qokvogozqtkoq9ng.public.blob.vercel-storage.com'
+  const response = await fetch(`${baseUrl}/${entry.originalFile}`);
+  const content = await response.text();
+
+  // const iframeSrc = `/api/file/${entry.originalFile}`
+  // console.log('iframeSrc', iframeSrc)
 
   // const contentSrc = `https://qokvogozqtkoq9ng.public.blob.vercel-storage.com/${entry.originalFile}`
   // const iframeSrcResponse = await fetch(contentSrc)
@@ -20,18 +25,11 @@ export default async function Page({ params }: { params: Params }) {
   // console.log('iframeSrcDocText', iframeSrcDocText.length)
 
   return (
-    <div className="w-full h-full">
+    <div className='w-full h-full'>
       <Link href="/">Home</Link>
-      {iframeSrc && 
-        <iframe 
-          src={iframeSrc}
-          // srcDoc={iframeSrcDocText} 
-          className="w-full h-full"
-          sandbox="allow-scripts allow-same-origin"
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          allow="fullscreen"
-        ></iframe>}
+      <div className='flex justify-center'>
+        <div className='text-large w-4/5' dangerouslySetInnerHTML={{ __html: content }}></div>
+      </div>
     </div>
   )
 }

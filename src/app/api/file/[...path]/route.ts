@@ -44,6 +44,7 @@ export async function GET(request: Request): Promise<Response> {
       status: response.status,
       headers: {
         'content-type': contentType,
+        'content-length': response.headers.get('content-length')!,
         
         // Explicitly allow iframe embedding
         // 'X-Frame-Options': 'ALLOWALL',

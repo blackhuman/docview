@@ -1,5 +1,9 @@
 import { deleteJob, Job, updateJob } from '@/app/utils/job';
 import { getPrisma } from '@/app/utils/prisma';
+import { JSDOM } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+import { uploadBlobToRemote } from '@/app/utils/vercel/blob/server'
+import { del } from '@vercel/blob';
 
 export async function processHtmlFileForUser(userId: string, entryId: string) {
   console.log('processHtmlFileForUser entry:', entryId)
@@ -22,7 +26,44 @@ export async function processHtmlFileForUser(userId: string, entryId: string) {
   }
 
   updateJobForUser({entryId, stage: 'PRE_PROCESSING'})
+  // Get content from originalFile
+  const response = await fetch(originalFile);
+  const htmlContent = await response.text();
+
+  const doc = new JSDOM(htmlContent);
+  const reader = new Readability(doc.window.document, {
+    serializer: (rootNode: Node) => {
+      const rootElement = rootNode as HTMLElement
+      const document = rootElement.ownerDocument
+      rootElement.querySelectorAll('img').forEach(img => img.remove());
+      rootElement.querySelectorAll('hr').forEach(hr => hr.remove());
+      rootElement.querySelectorAll('a').forEach(a => {
+        const span = document.createElement('span');
+        span.innerHTML = a.innerHTML;
+        a.parentNode?.replaceChild(span, a);
+      });
+      return rootElement.innerHTML;
+    }
+  });
+  const article = reader.parse()
+  const content = article?.content || ''
+
+  updateJobForUser({entryId, stage: 'PROCESSING'})
+
+  const targetFile = entry.id + '/content'
+  await uploadBlobToRemote(content, targetFile)
+  await prisma.entry.update({
+    where: {
+      id: entry.id
+    },
+    data: {
+      originalFile: targetFile,
+      processed: true
+    }
+  })
+
+  del(originalFile)
+
   updateJobForUser({entryId, stage: 'DONE'})
   deleteJob(userId, entryId)
-
 }

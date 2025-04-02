@@ -27,7 +27,7 @@ export async function notifyEntryAction() {
   notifyEntry(userId!)
 }
 
-export async function restartEpubProcessingAction(entryId: string) {
+export async function restartProcessingAction(entryId: string) {
   const prisma = await getPrisma()
   const entry = await prisma.entry.findFirst({where: {id: entryId}})
   if (!entry) {
@@ -51,7 +51,7 @@ export async function restartEpubProcessingAction(entryId: string) {
       break
     case 'HTML':
       await processHtmlFileForUser(entry.authorId, entry.id)
-      break
+      return // just workaround
     default:
       throw new Error('Entry type not supported')
   }

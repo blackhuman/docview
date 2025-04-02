@@ -1,0 +1,28 @@
+.page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.homeLink {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  color: #1f2937;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.homeLink:hover {
+  background-color: #e5e7eb;
+}
+
+.content {
+  margin-top: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
